@@ -3,7 +3,7 @@ import { View,Text } from "react-native"
 export default function Cart(){
     return(
         <View>
-            <Text>cartinho</Text>
+            <Text>Carrinho</Text>
         </View>
     )
 }

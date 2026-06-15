@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 
 import Home from '../../pages/Home';
 import Gerencia from '../../pages/Gerencia';
+import Cart from '../../pages/Cart';
 
 const Tab = createBottomTabNavigator();
 
@@ -43,13 +44,18 @@ export default function Tabs() {
       })}
     >
       <Tab.Screen
-        name="Home"
+        name="Catalogo"
         component={Home}
       />
 
       <Tab.Screen
         name="gerencia"
         component={Gerencia}
+      />
+
+      <Tab.Screen 
+      name='Carrinho'
+      component={Cart}
       />
     </Tab.Navigator>
   );
