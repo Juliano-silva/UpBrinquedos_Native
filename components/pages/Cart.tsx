@@ -1,39 +1,21 @@
+import React from "react";
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  pricePerDay: string;
-  startDate: string;
-  endDate: string;
-  days: number;
-  image: any;
-}
+import { useNavigation } from "@react-navigation/native";
+import { useCart } from "../db/CartContext";
 
 export default function Cart() {
-  const cartItems: CartItem[] = [
-    {
-      id: "1",
-      name: "Pula Pula Infantil",
-      price: 150.0,
-      pricePerDay: "150.00",
-      startDate: "15/06/2026",
-      endDate: "16/06/2026",
-      days: 1,
-      image: require("../../assets/icon.png"),
-    },
-  ];
+  const { cartItems, removeFromCart, clearCart } = useCart();
+  const navigation = useNavigation<any>();
 
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
 
   const handleRemoveItem = (id: string) => {
-    console.log("Remover item:", id);
+    removeFromCart(id);
   };
 
   const handleClearCart = () => {
-    console.log("Limpar carrinho");
+    clearCart();
   };
 
   const handleProceed = () => {
@@ -42,53 +24,20 @@ export default function Cart() {
 
   return (
     <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <View style={styles.headerContent}>
-          <View>
-            <Text style={styles.logoText}>
-              UP BRINQUEDOS
-            </Text>
-            <Text style={styles.logoSubText}>
-              A DIVERSÃO DA SUA FESTA
-            </Text>
-          </View>
-          <View style={styles.navIcons}>
-            <TouchableOpacity style={styles.navIcon}>
-              <Ionicons name="home-outline" size={24} color="#1e3a8a" />
-              <Text style={styles.navIconText}>Home</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navIcon}>
-              <Ionicons name="information-circle-outline" size={24} color="#1e3a8a" />
-              <Text style={styles.navIconText}>Sobre nós</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navIcon}>
-              <Ionicons name="person-outline" size={24} color="#1e3a8a" />
-              <Text style={styles.navIconText}>Gerencia</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={[styles.navIcon, styles.cartIconContainer]}>
-              <Ionicons name="cart-outline" size={24} color="#1e3a8a" />
-              <View style={styles.badge}>
-                <Text style={styles.badgeText}>{cartItems.length}</Text>
-              </View>
-              <Text style={styles.navIconText}>Carrinho</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
-
       {/* Main Content */}
       <View style={styles.mainContent}>
         {/* Title and Clear Button */}
         <View style={styles.titleRow}>
           <Text style={styles.pageTitle}>Carrinho</Text>
-          <TouchableOpacity onPress={handleClearCart} style={styles.clearButton}>
-            <Ionicons name="trash-outline" size={20} color="#1e3a5f" />
-            <Text style={styles.clearButtonText}>Limpar Carrinho</Text>
-          </TouchableOpacity>
+          {cartItems.length > 0 && (
+            <TouchableOpacity onPress={handleClearCart} style={styles.clearButton}>
+              <Ionicons name="trash-outline" size={20} color="#1e3a5f" />
+              <Text style={styles.clearButtonText}>Limpar Carrinho</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
-        {/* Cart Items */}
+        {/* Cart Items or Empty Card */}
         {cartItems.length > 0 ? (
           <View style={styles.cartList}>
             {cartItems.map((item) => (
@@ -135,11 +84,16 @@ export default function Cart() {
             ))}
           </View>
         ) : (
-          <View style={styles.emptyCart}>
-            <Ionicons name="cart-outline" size={48} color="gray" />
+          <View style={styles.emptyCartCard}>
             <Text style={styles.emptyCartText}>
               Seu carrinho está vazio
             </Text>
+            <TouchableOpacity 
+              style={styles.emptyCartButton} 
+              onPress={() => navigation.navigate("Catalogo")}
+            >
+              <Text style={styles.emptyCartButtonText}>Ver Brinquedos</Text>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -169,61 +123,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#FCF9F2',
-  },
-  header: {
-    backgroundColor: '#fcd34d',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-  },
-  headerContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: 20,
-    fontWeight: '900',
-    color: '#1e3a8a',
-  },
-  logoSubText: {
-    fontSize: 10,
-    fontWeight: 'bold',
-    color: '#ef4444',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
-  },
-  navIcons: {
-    flexDirection: 'row',
-    gap: 24,
-  },
-  navIcon: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  cartIconContainer: {
-    position: 'relative',
-  },
-  navIconText: {
-    fontSize: 12,
-    color: '#1e3a8a',
-    marginTop: 4,
-  },
-  badge: {
-    position: 'absolute',
-    top: -8,
-    right: -8,
-    backgroundColor: '#ec4899',
-    borderRadius: 12,
-    width: 20,
-    height: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  badgeText: {
-    color: '#ffffff',
-    fontSize: 10,
-    fontWeight: 'bold',
   },
   mainContent: {
     paddingHorizontal: 24,
@@ -343,14 +242,45 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
   },
-  emptyCart: {
+  emptyCartCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
     paddingVertical: 48,
+    paddingHorizontal: 24,
     alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+    width: '100%',
+    maxWidth: 600,
+    alignSelf: 'center',
+    marginTop: 20,
   },
   emptyCartText: {
-    color: '#6b7280',
-    marginTop: 16,
+    fontSize: 16,
+    color: '#64748b',
+    marginBottom: 20,
     textAlign: 'center',
+    fontWeight: '500',
+  },
+  emptyCartButton: {
+    backgroundColor: '#fcd34d',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  emptyCartButtonText: {
+    color: '#1e3a8a',
+    fontWeight: 'bold',
+    fontSize: 15,
   },
   totalCard: {
     backgroundColor: '#ffffff',

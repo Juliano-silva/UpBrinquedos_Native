@@ -23,14 +23,14 @@ export default function Tabs() {
         },
 
         tabBarIcon: ({ color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home';
+          let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';
 
-          if (route.name === 'Home') {
-            iconName = 'home';
-          }
-
-          if (route.name === 'gerencia') {
-            iconName = 'settings';
+          if (route.name === 'Catalogo') {
+            iconName = 'home-outline';
+          } else if (route.name === 'gerencia') {
+            iconName = 'settings-outline';
+          } else if (route.name === 'Carrinho') {
+            iconName = 'cart-outline';
           }
 
           return (
