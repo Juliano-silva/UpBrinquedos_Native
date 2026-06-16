@@ -1,4 +1,4 @@
-import { View, Text, Image, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 interface CartItem {
@@ -9,7 +9,7 @@ interface CartItem {
   startDate: string;
   endDate: string;
   days: number;
-  image: string;
+  image: any;
 }
 
 export default function Cart() {
@@ -41,85 +41,75 @@ export default function Cart() {
   };
 
   return (
-    <ScrollView className="flex-1 bg-[#FCF9F2]">
+    <ScrollView style={styles.container}>
       {/* Header */}
-      <View className="bg-[#fcd34d] px-6 py-4">
-        <View className="flex-row justify-between items-center">
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
           <View>
-            <Text className="text-xl font-black text-[#1e3a8a]">
+            <Text style={styles.logoText}>
               UP BRINQUEDOS
             </Text>
-            <Text className="text-[10px] font-bold text-red-500 uppercase tracking-wider">
+            <Text style={styles.logoSubText}>
               A DIVERSÃO DA SUA FESTA
             </Text>
           </View>
-          <View className="flex-row gap-6">
-            <TouchableOpacity className="flex-col items-center">
+          <View style={styles.navIcons}>
+            <TouchableOpacity style={styles.navIcon}>
               <Ionicons name="home-outline" size={24} color="#1e3a8a" />
-              <Text className="text-xs text-[#1e3a8a] mt-1">Home</Text>
+              <Text style={styles.navIconText}>Home</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-col items-center">
+            <TouchableOpacity style={styles.navIcon}>
               <Ionicons name="information-circle-outline" size={24} color="#1e3a8a" />
-              <Text className="text-xs text-[#1e3a8a] mt-1">Sobre nós</Text>
+              <Text style={styles.navIconText}>Sobre nós</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-col items-center">
+            <TouchableOpacity style={styles.navIcon}>
               <Ionicons name="person-outline" size={24} color="#1e3a8a" />
-              <Text className="text-xs text-[#1e3a8a] mt-1">Gerencia</Text>
+              <Text style={styles.navIconText}>Gerencia</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="flex-col items-center relative">
+            <TouchableOpacity style={[styles.navIcon, styles.cartIconContainer]}>
               <Ionicons name="cart-outline" size={24} color="#1e3a8a" />
-              <View className="absolute -top-2 -right-2 bg-pink-500 rounded-full w-5 h-5 justify-center items-center">
-                <Text className="text-white text-[10px] font-bold">
-                  {cartItems.length}
-                </Text>
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{cartItems.length}</Text>
               </View>
-              <Text className="text-xs text-[#1e3a8a] mt-1">Carrinho</Text>
+              <Text style={styles.navIconText}>Carrinho</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
 
       {/* Main Content */}
-      <View className="px-6 py-10 max-w-5xl mx-auto w-full">
+      <View style={styles.mainContent}>
         {/* Title and Clear Button */}
-        <View className="flex-row justify-between items-center mb-6">
-          <Text className="text-3xl font-bold text-[#1e3a5f]">Carrinho</Text>
-          <TouchableOpacity
-            onPress={handleClearCart}
-            className="bg-[#fcd34d] px-4 py-3 rounded-lg flex-row items-center gap-2 shadow-sm"
-          >
+        <View style={styles.titleRow}>
+          <Text style={styles.pageTitle}>Carrinho</Text>
+          <TouchableOpacity onPress={handleClearCart} style={styles.clearButton}>
             <Ionicons name="trash-outline" size={20} color="#1e3a5f" />
-            <Text className="font-bold text-[#1e3a5f]">Limpar Carrinho</Text>
+            <Text style={styles.clearButtonText}>Limpar Carrinho</Text>
           </TouchableOpacity>
         </View>
 
         {/* Cart Items */}
         {cartItems.length > 0 ? (
-          <View className="gap-4 mb-6">
+          <View style={styles.cartList}>
             {cartItems.map((item) => (
-              <View
-                key={item.id}
-                className="bg-white rounded-2xl p-5 shadow-sm flex-row items-center justify-between"
-              >
-                <View className="flex-row items-center gap-4">
+              <View key={item.id} style={styles.cartCard}>
+                <View style={styles.cartCardLeft}>
                   {/* Product Image */}
                   <Image
                     source={item.image}
-                    className="w-24 h-24 rounded-xl"
+                    style={styles.productImage}
                     resizeMode="cover"
                   />
 
                   {/* Product Info */}
-                  <View className="justify-center">
-                    <Text className="text-[18px] font-bold text-[#1e3a5f] mb-1">
-                      {item.name}
-                    </Text>
-                    <Text className="text-sm text-gray-500 mb-2">
+                  <View style={styles.productInfo}>
+                    <Text style={styles.productName}>{item.name}</Text>
+                    <Text style={styles.productPriceDay}>
                       R$ {item.pricePerDay}/dia
                     </Text>
-                    <View className="flex-row items-center gap-2">
+                    <View style={styles.dateRow}>
                       <Ionicons name="calendar-outline" size={16} color="#8ba6d1" />
-                      <Text className="text-[13px] text-[#8ba6d1] font-medium">
+                      <Text style={styles.dateText}>
                         {item.startDate} até {item.endDate} ({item.days} dia)
                       </Text>
                     </View>
@@ -127,29 +117,27 @@ export default function Cart() {
                 </View>
 
                 {/* Subtotal & Remove */}
-                <View className="flex-row items-center gap-4">
-                  <View className="items-end">
-                    <Text className="text-gray-500 text-sm mb-1">Subtotal</Text>
-                    <Text className="text-[#ef4444] font-bold text-xl">
+                <View style={styles.cartCardRight}>
+                  <View style={styles.subtotalContainer}>
+                    <Text style={styles.subtotalLabel}>Subtotal</Text>
+                    <Text style={styles.subtotalValue}>
                       R$ {item.price.toFixed(2)}
                     </Text>
                   </View>
                   <TouchableOpacity
                     onPress={() => handleRemoveItem(item.id)}
-                    className="bg-[#ef4444] px-5 py-3 rounded-lg justify-center ml-2"
+                    style={styles.removeButton}
                   >
-                    <Text className="text-white font-bold text-sm">
-                      Remover
-                    </Text>
+                    <Text style={styles.removeButtonText}>Remover</Text>
                   </TouchableOpacity>
                 </View>
               </View>
             ))}
           </View>
         ) : (
-          <View className="py-12 items-center">
+          <View style={styles.emptyCart}>
             <Ionicons name="cart-outline" size={48} color="gray" />
-            <Text className="text-gray-500 mt-4 text-center">
+            <Text style={styles.emptyCartText}>
               Seu carrinho está vazio
             </Text>
           </View>
@@ -157,19 +145,16 @@ export default function Cart() {
 
         {/* Total Section & Proceed Button */}
         {cartItems.length > 0 && (
-          <View className="bg-white rounded-2xl p-6 shadow-sm mt-4">
-            <Text className="text-center text-gray-500 text-sm mb-2 font-medium">
+          <View style={styles.totalCard}>
+            <Text style={styles.totalLabel}>
               Total do Carrinho
             </Text>
-            <Text className="text-center text-[40px] font-bold text-[#10b981] mb-6">
+            <Text style={styles.totalValue}>
               R$ {total.toFixed(2)}
             </Text>
             
-            <TouchableOpacity
-              onPress={handleProceed}
-              className="bg-[#ef4444] py-4 rounded-xl shadow-sm"
-            >
-              <Text className="text-white text-center font-bold text-lg">
+            <TouchableOpacity onPress={handleProceed} style={styles.proceedButton}>
+              <Text style={styles.proceedButtonText}>
                 Prosseguir para Aluguel
               </Text>
             </TouchableOpacity>
@@ -179,3 +164,233 @@ export default function Cart() {
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FCF9F2',
+  },
+  header: {
+    backgroundColor: '#fcd34d',
+    paddingHorizontal: 24,
+    paddingVertical: 16,
+  },
+  headerContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  logoText: {
+    fontSize: 20,
+    fontWeight: '900',
+    color: '#1e3a8a',
+  },
+  logoSubText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#ef4444',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  navIcons: {
+    flexDirection: 'row',
+    gap: 24,
+  },
+  navIcon: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cartIconContainer: {
+    position: 'relative',
+  },
+  navIconText: {
+    fontSize: 12,
+    color: '#1e3a8a',
+    marginTop: 4,
+  },
+  badge: {
+    position: 'absolute',
+    top: -8,
+    right: -8,
+    backgroundColor: '#ec4899',
+    borderRadius: 12,
+    width: 20,
+    height: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 10,
+  },
+  badgeText: {
+    color: '#ffffff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
+  mainContent: {
+    paddingHorizontal: 24,
+    paddingVertical: 40,
+    width: '100%',
+    maxWidth: 1024,
+    alignSelf: 'center',
+  },
+  titleRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  pageTitle: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#1e3a5f',
+  },
+  clearButton: {
+    backgroundColor: '#fcd34d',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 8,
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  clearButtonText: {
+    fontWeight: 'bold',
+    color: '#1e3a5f',
+  },
+  cartList: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  cartCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  cartCardLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  productImage: {
+    width: 96,
+    height: 96,
+    borderRadius: 12,
+  },
+  productInfo: {
+    justifyContent: 'center',
+  },
+  productName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#1e3a5f',
+    marginBottom: 4,
+  },
+  productPriceDay: {
+    fontSize: 14,
+    color: '#6b7280',
+    marginBottom: 8,
+  },
+  dateRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  dateText: {
+    fontSize: 13,
+    color: '#8ba6d1',
+    fontWeight: '500',
+  },
+  cartCardRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  subtotalContainer: {
+    alignItems: 'flex-end',
+  },
+  subtotalLabel: {
+    color: '#6b7280',
+    fontSize: 14,
+    marginBottom: 4,
+  },
+  subtotalValue: {
+    color: '#ef4444',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  removeButton: {
+    backgroundColor: '#ef4444',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+    borderRadius: 8,
+    justifyContent: 'center',
+    marginLeft: 8,
+  },
+  removeButtonText: {
+    color: '#ffffff',
+    fontWeight: 'bold',
+    fontSize: 14,
+  },
+  emptyCart: {
+    paddingVertical: 48,
+    alignItems: 'center',
+  },
+  emptyCartText: {
+    color: '#6b7280',
+    marginTop: 16,
+    textAlign: 'center',
+  },
+  totalCard: {
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    padding: 24,
+    marginTop: 16,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  totalLabel: {
+    textAlign: 'center',
+    color: '#6b7280',
+    fontSize: 14,
+    marginBottom: 8,
+    fontWeight: '500',
+  },
+  totalValue: {
+    textAlign: 'center',
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: '#10b981',
+    marginBottom: 24,
+  },
+  proceedButton: {
+    backgroundColor: '#ef4444',
+    paddingVertical: 16,
+    borderRadius: 12,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.05,
+    shadowRadius: 2,
+  },
+  proceedButtonText: {
+    color: '#ffffff',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+});
