@@ -84,9 +84,9 @@ export default function Tabs() {
 const styles = StyleSheet.create({
   tabBar: {
     flexDirection: "row",
-    backgroundColor: "#fcd34d",
-    borderTopWidth: 1,
-    borderTopColor: "#f59e0b",
+    backgroundColor: "#ffffff",
+    borderTopWidth: 10,
+    borderTopColor: "#e5e7eb75",
     paddingHorizontal: 12,
     paddingVertical: 10,
     justifyContent: "space-around",
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     position: "absolute",
     top: -6,
     right: -8,
-    backgroundColor: "#ec4899",
+    backgroundColor: "#e44848",
     borderRadius: 9,
     minWidth: 18,
     height: 18,
@@ -122,7 +122,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 3,
   },
   badgeText: {
-    color: "#ffffff",
+    color: "#0e0a0a",
     fontSize: 10,
     fontWeight: "bold",
   },

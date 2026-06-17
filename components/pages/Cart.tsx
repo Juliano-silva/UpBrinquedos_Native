@@ -1,5 +1,12 @@
 import React from "react";
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../db/CartContext";
@@ -30,7 +37,10 @@ export default function Cart() {
         <View style={styles.titleRow}>
           <Text style={styles.pageTitle}>Carrinho</Text>
           {cartItems.length > 0 && (
-            <TouchableOpacity onPress={handleClearCart} style={styles.clearButton}>
+            <TouchableOpacity
+              onPress={handleClearCart}
+              style={styles.clearButton}
+            >
               <Ionicons name="trash-outline" size={20} color="#1e3a5f" />
               <Text style={styles.clearButtonText}>Limpar Carrinho</Text>
             </TouchableOpacity>
@@ -57,7 +67,11 @@ export default function Cart() {
                       R$ {item.pricePerDay}/dia
                     </Text>
                     <View style={styles.dateRow}>
-                      <Ionicons name="calendar-outline" size={16} color="#8ba6d1" />
+                      <Ionicons
+                        name="calendar-outline"
+                        size={16}
+                        color="#8ba6d1"
+                      />
                       <Text style={styles.dateText}>
                         {item.startDate} até {item.endDate} ({item.days} dia)
                       </Text>
@@ -65,7 +79,6 @@ export default function Cart() {
                   </View>
                 </View>
 
-                {/* Subtotal & Remove */}
                 <View style={styles.cartCardRight}>
                   <View style={styles.subtotalContainer}>
                     <Text style={styles.subtotalLabel}>Subtotal</Text>
@@ -85,11 +98,9 @@ export default function Cart() {
           </View>
         ) : (
           <View style={styles.emptyCartCard}>
-            <Text style={styles.emptyCartText}>
-              Seu carrinho está vazio
-            </Text>
-            <TouchableOpacity 
-              style={styles.emptyCartButton} 
+            <Text style={styles.emptyCartText}>Seu carrinho está vazio</Text>
+            <TouchableOpacity
+              style={styles.emptyCartButton}
               onPress={() => navigation.navigate("Catalogo")}
             >
               <Text style={styles.emptyCartButtonText}>Ver Brinquedos</Text>
@@ -100,14 +111,13 @@ export default function Cart() {
         {/* Total Section & Proceed Button */}
         {cartItems.length > 0 && (
           <View style={styles.totalCard}>
-            <Text style={styles.totalLabel}>
-              Total do Carrinho
-            </Text>
-            <Text style={styles.totalValue}>
-              R$ {total.toFixed(2)}
-            </Text>
-            
-            <TouchableOpacity onPress={handleProceed} style={styles.proceedButton}>
+            <Text style={styles.totalLabel}>Total do Carrinho</Text>
+            <Text style={styles.totalValue}>R$ {total.toFixed(2)}</Text>
+
+            <TouchableOpacity
+              onPress={handleProceed}
+              style={styles.proceedButton}
+            >
               <Text style={styles.proceedButtonText}>
                 Prosseguir para Aluguel
               </Text>
@@ -122,64 +132,64 @@ export default function Cart() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FCF9F2',
+    backgroundColor: "#FCF9F2",
   },
   mainContent: {
     paddingHorizontal: 24,
     paddingVertical: 40,
-    width: '100%',
+    width: "100%",
     maxWidth: 1024,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   titleRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 24,
   },
   pageTitle: {
     fontSize: 30,
-    fontWeight: 'bold',
-    color: '#1e3a5f',
+    fontWeight: "bold",
+    color: "#1e3a5f",
   },
   clearButton: {
-    backgroundColor: '#fcd34d',
+    backgroundColor: "#fcd34d",
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
   clearButtonText: {
-    fontWeight: 'bold',
-    color: '#1e3a5f',
+    fontWeight: "bold",
+    color: "#1e3a5f",
   },
   cartList: {
     gap: 16,
     marginBottom: 24,
   },
   cartCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 16,
     padding: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
   cartCardLeft: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
   },
   productImage: {
@@ -188,139 +198,139 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   productInfo: {
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   productName: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#1e3a5f',
+    fontWeight: "bold",
+    color: "#1e3a5f",
     marginBottom: 4,
   },
   productPriceDay: {
     fontSize: 14,
-    color: '#6b7280',
+    color: "#6b7280",
     marginBottom: 8,
   },
   dateRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 8,
   },
   dateText: {
     fontSize: 13,
-    color: '#8ba6d1',
-    fontWeight: '500',
+    color: "#8ba6d1",
+    fontWeight: "500",
   },
   cartCardRight: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 16,
   },
   subtotalContainer: {
-    alignItems: 'flex-end',
+    alignItems: "flex-end",
   },
   subtotalLabel: {
-    color: '#6b7280',
+    color: "#6b7280",
     fontSize: 14,
     marginBottom: 4,
   },
   subtotalValue: {
-    color: '#ef4444',
-    fontWeight: 'bold',
+    color: "#ef4444",
+    fontWeight: "bold",
     fontSize: 20,
   },
   removeButton: {
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 8,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginLeft: 8,
   },
   removeButtonText: {
-    color: '#ffffff',
-    fontWeight: 'bold',
+    color: "#ffffff",
+    fontWeight: "bold",
     fontSize: 14,
   },
   emptyCartCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 16,
     paddingVertical: 48,
     paddingHorizontal: 24,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
-    width: '100%',
+    width: "100%",
     maxWidth: 600,
-    alignSelf: 'center',
+    alignSelf: "center",
     marginTop: 20,
   },
   emptyCartText: {
     fontSize: 16,
-    color: '#64748b',
+    color: "#64748b",
     marginBottom: 20,
-    textAlign: 'center',
-    fontWeight: '500',
+    textAlign: "center",
+    fontWeight: "500",
   },
   emptyCartButton: {
-    backgroundColor: '#fcd34d',
+    backgroundColor: "#fcd34d00",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 8,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.1,
     shadowRadius: 1,
   },
   emptyCartButtonText: {
-    color: '#1e3a8a',
-    fontWeight: 'bold',
+    color: "#1e3a8a",
+    fontWeight: "bold",
     fontSize: 15,
   },
   totalCard: {
-    backgroundColor: '#ffffff',
+    backgroundColor: "#ffffff",
     borderRadius: 16,
     padding: 24,
     marginTop: 16,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
   totalLabel: {
-    textAlign: 'center',
-    color: '#6b7280',
+    textAlign: "center",
+    color: "#6b7280",
     fontSize: 14,
     marginBottom: 8,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   totalValue: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 40,
-    fontWeight: 'bold',
-    color: '#10b981',
+    fontWeight: "bold",
+    color: "#10b981",
     marginBottom: 24,
   },
   proceedButton: {
-    backgroundColor: '#ef4444',
+    backgroundColor: "#ef4444",
     paddingVertical: 16,
     borderRadius: 12,
     elevation: 2,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
   proceedButtonText: {
-    color: '#ffffff',
-    textAlign: 'center',
-    fontWeight: 'bold',
+    color: "#ffffff",
+    textAlign: "center",
+    fontWeight: "bold",
     fontSize: 18,
   },
 });
