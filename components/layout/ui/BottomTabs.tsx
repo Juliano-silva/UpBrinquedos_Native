@@ -1,62 +1,129 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from "react-native";
+import { useCart } from "../../db/CartContext";
 
-import Home from '../../pages/Home';
-import Gerencia from '../../pages/Gerencia';
-import Cart from '../../pages/Cart';
+import Home from "../../pages/Home";
+import Gerencia from "../../pages/Gerencia";
+import Cart from "../../pages/Cart";
 
 const Tab = createBottomTabNavigator();
+
+function CustomTabBar({ state, descriptors, navigation }: any) {
+  const { cartItems } = useCart();
+
+  const handleAboutUs = () => {
+    Alert.alert(
+      "Sobre Nós",
+      "UP Brinquedos - A diversão da sua festa! Aluguel de pula-pula e brinquedos infantis com o melhor atendimento.",
+    );
+  };
+
+  return (
+    <View style={styles.tabBar}>
+      {/* Home Button */}
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => navigation.navigate("Catalogo")}
+      >
+        <Ionicons name="home-outline" size={24} color="#1e3a8a" />
+        <Text style={styles.tabLabel}>Home</Text>
+      </TouchableOpacity>
+
+      {/* About Button */}
+      <TouchableOpacity style={styles.tabButton} onPress={handleAboutUs}>
+        <Ionicons name="information-circle-outline" size={24} color="#1e3a8a" />
+        <Text style={styles.tabLabel}>Sobre nós</Text>
+      </TouchableOpacity>
+
+      {/* Management Button */}
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => navigation.navigate("gerencia")}
+      >
+        <Ionicons name="person-outline" size={24} color="#1e3a8a" />
+        <Text style={styles.tabLabel}>Gerencia</Text>
+      </TouchableOpacity>
+
+      {/* Cart Button */}
+      <TouchableOpacity
+        style={styles.tabButton}
+        onPress={() => navigation.navigate("Carrinho")}
+      >
+        <View style={styles.cartContainer}>
+          <Ionicons name="cart-outline" size={24} color="#1e3a8a" />
+          {cartItems.length > 0 && (
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>{cartItems.length}</Text>
+            </View>
+          )}
+        </View>
+        <Text style={styles.tabLabel}>Carrinho</Text>
+      </TouchableOpacity>
+    </View>
+  );
+}
 
 export default function Tabs() {
   return (
     <Tab.Navigator
-      screenOptions={({ route }) => ({
+      tabBar={(props) => <CustomTabBar {...props} />}
+      screenOptions={{
         headerShown: false,
-
-        tabBarActiveTintColor: '#2563eb',
-        tabBarInactiveTintColor: '#64748b',
-
-        tabBarStyle: {
-          height: 65,
-          paddingBottom: 8,
-          paddingTop: 8,
-        },
-
-        tabBarIcon: ({ color, size }) => {
-          let iconName: keyof typeof Ionicons.glyphMap = 'home-outline';
-
-          if (route.name === 'Catalogo') {
-            iconName = 'home-outline';
-          } else if (route.name === 'gerencia') {
-            iconName = 'settings-outline';
-          } else if (route.name === 'Carrinho') {
-            iconName = 'cart-outline';
-          }
-
-          return (
-            <Ionicons
-              name={iconName}
-              size={size}
-              color={color}
-            />
-          );
-        },
-      })}
+      }}
     >
-      <Tab.Screen
-        name="Catalogo"
-        component={Home}
-      />
+      <Tab.Screen name="Catalogo" component={Home} />
 
-      <Tab.Screen
-        name="gerencia"
-        component={Gerencia}
-      />
+      <Tab.Screen name="gerencia" component={Gerencia} />
 
-      <Tab.Screen 
-      name='Carrinho'
-      component={Cart}
-      />
+      <Tab.Screen name="Carrinho" component={Cart} />
     </Tab.Navigator>
   );
 }
+
+const styles = StyleSheet.create({
+  tabBar: {
+    flexDirection: "row",
+    backgroundColor: "#fcd34d",
+    borderTopWidth: 1,
+    borderTopColor: "#f59e0b",
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    justifyContent: "space-around",
+    alignItems: "center",
+    height: 70,
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 8,
+  },
+  tabLabel: {
+    fontSize: 12,
+    fontWeight: "600",
+    color: "#1e3a8a",
+    marginTop: 4,
+  },
+  cartContainer: {
+    position: "relative",
+    alignItems: "center",
+  },
+  badge: {
+    position: "absolute",
+    top: -6,
+    right: -8,
+    backgroundColor: "#ec4899",
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 3,
+  },
+  badgeText: {
+    color: "#ffffff",
+    fontSize: 10,
+    fontWeight: "bold",
+  },
+});
