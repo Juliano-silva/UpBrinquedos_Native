@@ -52,14 +52,8 @@ export default function FormularioAluguel() {
 
   return (
     <ScrollView style={{ padding: 20 }}>
-      <Text style={{ fontSize: 22, fontWeight: "bold" }}>
-        Alugar Brinquedo
-      </Text>
-
-      <Text>Preencha os dados para ver os brinquedos disponíveis:</Text>
-
       <Text style={{ marginTop: 20, fontWeight: "bold" }}>
-        Selecione o período
+        Selecione o período que deseja alugar:
       </Text>
 
       <Calendar
@@ -71,7 +65,11 @@ export default function FormularioAluguel() {
         markingType={"period"}
         markedDates={{
           ...(inicio && {
-            [inicio]: { startingDay: true, color: "#50cebb", textColor: "white" },
+            [inicio]: {
+              startingDay: true,
+              color: "#50cebb",
+              textColor: "white",
+            },
           }),
           ...(fim && {
             [fim]: { endingDay: true, color: "#50cebb", textColor: "white" },
@@ -79,11 +77,11 @@ export default function FormularioAluguel() {
         }}
       />
 
+      <Text>Preencha os dados para ver os brinquedos disponíveis:</Text>
+
       {showForm && (
         <View style={{ marginTop: 20 }}>
-          <Text style={{ fontSize: 18 }}>
-            Endereço de Entrega
-          </Text>
+          <Text style={{ fontSize: 18 }}>Endereço de Entrega</Text>
 
           <TextInput
             placeholder="Município"

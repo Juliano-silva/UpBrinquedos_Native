@@ -6,6 +6,7 @@ import { useCart } from "../../db/CartContext";
 import Home from "../../pages/Home";
 import Gerencia from "../../pages/Gerencia";
 import Cart from "../../pages/Cart";
+import About from "../../pages/About";
 
 const Tab = createBottomTabNavigator();
 
@@ -13,10 +14,7 @@ function CustomTabBar({ state, descriptors, navigation }: any) {
   const { cartItems } = useCart();
 
   const handleAboutUs = () => {
-    Alert.alert(
-      "Sobre Nós",
-      "UP Brinquedos - A diversão da sua festa! Aluguel de pula-pula e brinquedos infantis com o melhor atendimento.",
-    );
+    navigation.navigate("Sobre");
   };
 
   return (
@@ -73,6 +71,8 @@ export default function Tabs() {
       }}
     >
       <Tab.Screen name="Catalogo" component={Home} />
+
+      <Tab.Screen name="Sobre" component={About} />
 
       <Tab.Screen name="gerencia" component={Gerencia} />
 
