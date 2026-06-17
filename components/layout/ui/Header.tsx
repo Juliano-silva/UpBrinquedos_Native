@@ -6,6 +6,7 @@ export default function Header() {
     <View style={styles.header}>
       <View style={styles.headerContent}>
         <Text style={styles.logoText}>UP BRINQUEDOS</Text>
+        <Text style={styles.logoSubText}>A DIVERSÃO DA SUA FESTA</Text>
       </View>
     </View>
   );
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   headerContent: {
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     maxWidth: 1200,
@@ -36,5 +37,11 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     textTransform: "uppercase",
     marginTop: 1,
+  },
+  logoSubText: {
+    fontSize: 9,
+    fontWeight: "bold",
+    color: "#ef4444",
+    marginTop: 2,
   },
 });
