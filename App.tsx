@@ -5,22 +5,52 @@ import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { CartProvider } from './components/db/CartContext';
 import Header from './components/layout/ui/Header';
+import FormularioAluguel from './components/pages/Formulario';
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect, useState } from 'react';
+
+
 
 export default function App() {
-  return (
-    <CartProvider>
-      <SafeAreaProvider>
-        <NavigationContainer>
-          <View style={styles.appContainer}>
-            <Header />
-            <View style={styles.contentContainer}>
-              <BottomTabs />
+  const [alugel, setAluguel] = useState(Boolean)
+
+  useEffect(() => {
+    const verificar = async () => {
+      try {
+        const dados = await AsyncStorage.getItem("@dados_aluguel");
+
+        if (dados) {
+          setAluguel(false);
+        } else {
+          setAluguel(true); 
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    verificar()
+  })
+
+  
+
+  if (alugel) {
+    return <FormularioAluguel />;
+  } else {
+    return (
+      <CartProvider>
+        <SafeAreaProvider>
+          <NavigationContainer>
+            <View style={styles.appContainer}>
+              <Header />
+              <View style={styles.contentContainer}>
+                <BottomTabs />
+              </View>
             </View>
-          </View>
-        </NavigationContainer>
-      </SafeAreaProvider>
-    </CartProvider>
-  );
+          </NavigationContainer>
+        </SafeAreaProvider>
+      </CartProvider>
+    );
+  }
 }
 
 const styles = StyleSheet.create({

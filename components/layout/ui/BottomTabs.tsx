@@ -98,11 +98,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: "#2c69c4",
-    borderRadius: 8,
     marginHorizontal: 4,
-    backgroundColor: "#f9fafb",
   },
   tabLabel: {
     fontSize: 12,
