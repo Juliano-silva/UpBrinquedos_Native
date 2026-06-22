@@ -74,11 +74,10 @@ export default function Home() {
       return;
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const days = Math.ceil(
-      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-    );
+    const start = new Date(startDate + "T00:00:00");
+    const end = new Date(endDate + "T00:00:00");
+    const diff = end.getTime() - start.getTime();
+    const days = diff === 0 ? 1 : Math.ceil(diff / (1000 * 60 * 60 * 24));
 
     const cartItem = {
       id: `${selectedToy.id}-${Date.now()}`,
@@ -111,10 +110,12 @@ export default function Home() {
 
   const totalDays =
     startDate && endDate
-      ? Math.ceil(
-          (new Date(endDate).getTime() - new Date(startDate).getTime()) /
-            (1000 * 60 * 60 * 24)
-        )
+      ? (() => {
+          const start = new Date(startDate + "T00:00:00");
+          const end = new Date(endDate + "T00:00:00");
+          const diff = end.getTime() - start.getTime();
+          return diff === 0 ? 1 : Math.ceil(diff / (1000 * 60 * 60 * 24));
+        })()
       : 0;
 
   return (

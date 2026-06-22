@@ -52,7 +52,7 @@ export default function Cart() {
           <View style={styles.cartList}>
             {cartItems.map((item) => (
               <View key={item.id} style={styles.cartCard}>
-                <View style={styles.cartCardLeft}>
+                <View style={styles.cartCardTop}>
                   {/* Product Image */}
                   <Image
                     source={item.image}
@@ -62,7 +62,7 @@ export default function Cart() {
 
                   {/* Product Info */}
                   <View style={styles.productInfo}>
-                    <Text style={styles.productName}>{item.name}</Text>
+                    <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
                     <Text style={styles.productPriceDay}>
                       R$ {item.pricePerDay}/dia
                     </Text>
@@ -73,15 +73,17 @@ export default function Cart() {
                         color="#8ba6d1"
                       />
                       <Text style={styles.dateText}>
-                        {item.startDate} até {item.endDate} ({item.days} dia)
+                        {item.startDate} até {item.endDate} ({item.days} {item.days === 1 ? "dia" : "dias"})
                       </Text>
                     </View>
                   </View>
                 </View>
 
-                <View style={styles.cartCardRight}>
+                <View style={styles.divider} />
+
+                <View style={styles.cartCardBottom}>
                   <View style={styles.subtotalContainer}>
-                    <Text style={styles.subtotalLabel}>Subtotal</Text>
+                    <Text style={styles.subtotalLabel}>Subtotal: </Text>
                     <Text style={styles.subtotalValue}>
                       R$ {item.price.toFixed(2)}
                     </Text>
@@ -90,6 +92,7 @@ export default function Cart() {
                     onPress={() => handleRemoveItem(item.id)}
                     style={styles.removeButton}
                   >
+                    <Ionicons name="trash-outline" size={16} color="#ef4444" />
                     <Text style={styles.removeButtonText}>Remover</Text>
                   </TouchableOpacity>
                 </View>
@@ -177,80 +180,87 @@ const styles = StyleSheet.create({
   cartCard: {
     backgroundColor: "#ffffff",
     borderRadius: 16,
-    padding: 20,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+    padding: 16,
+    flexDirection: "column",
     elevation: 2,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
   },
-  cartCardLeft: {
+  cartCardTop: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 16,
+    gap: 12,
   },
   productImage: {
-    width: 96,
-    height: 96,
+    width: 80,
+    height: 80,
     borderRadius: 12,
   },
   productInfo: {
+    flex: 1,
     justifyContent: "center",
   },
   productName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
     color: "#1e3a5f",
     marginBottom: 4,
   },
   productPriceDay: {
-    fontSize: 14,
+    fontSize: 13,
     color: "#6b7280",
-    marginBottom: 8,
+    marginBottom: 4,
   },
   dateRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
+    gap: 6,
   },
   dateText: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#8ba6d1",
     fontWeight: "500",
   },
-  cartCardRight: {
+  divider: {
+    height: 1,
+    backgroundColor: "#f3f4f6",
+    marginVertical: 12,
+  },
+  cartCardBottom: {
     flexDirection: "row",
+    justifyContent: "space-between",
     alignItems: "center",
-    gap: 16,
   },
   subtotalContainer: {
-    alignItems: "flex-end",
+    flexDirection: "row",
+    alignItems: "center",
   },
   subtotalLabel: {
     color: "#6b7280",
-    fontSize: 14,
-    marginBottom: 4,
+    fontSize: 13,
   },
   subtotalValue: {
     color: "#ef4444",
     fontWeight: "bold",
-    fontSize: 20,
+    fontSize: 18,
   },
   removeButton: {
-    backgroundColor: "#ef4444",
-    paddingHorizontal: 20,
-    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    backgroundColor: "#fef2f2",
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: 8,
-    justifyContent: "center",
-    marginLeft: 8,
+    borderWidth: 1,
+    borderColor: "#fee2e2",
   },
   removeButtonText: {
-    color: "#ffffff",
+    color: "#ef4444",
     fontWeight: "bold",
-    fontSize: 14,
+    fontSize: 12,
   },
   emptyCartCard: {
     backgroundColor: "#ffffff48",
