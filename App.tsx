@@ -1,12 +1,12 @@
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, View, ActivityIndicator } from 'react-native';
-import BottomTabs from './components/layout/ui/BottomTabs';
-import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { CartProvider, useCart } from './components/db/CartContext';
-import Header from './components/layout/ui/Header';
-import FormularioAluguel from './components/pages/Formulario';
+import React from "react";
+import { StatusBar } from "expo-status-bar";
+import { StyleSheet, View, ActivityIndicator } from "react-native";
+import BottomTabs from "./components/layout/ui/BottomTabs";
+import { NavigationContainer } from "@react-navigation/native";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { CartProvider, useCart } from "./components/db/CartContext";
+import Header from "./components/layout/ui/Header";
+import FormularioAluguel from "./components/pages/Formulario";
 
 function AppContent() {
   const { rentalData, isRentalLoading } = useCart();
@@ -55,15 +55,15 @@ export default function App() {
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
-    backgroundColor: '#FCF9F2',
+    backgroundColor: "#FCF9F2",
   },
   contentContainer: {
     flex: 1,
   },
   loadingContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#FCF9F2',
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "#FCF9F2",
   },
 });
