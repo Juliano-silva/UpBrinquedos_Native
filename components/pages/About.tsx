@@ -7,12 +7,19 @@ import {
   Image,
   Dimensions,
 } from "react-native";
-import { Video } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
+import { INFLATABLE_TOYS } from "../../assets/toys";
 
 const { width } = Dimensions.get("window");
 const isWeb = width > 768;
 
 export default function About() {
+  const randomToy = React.useMemo(() => {
+    const randomIndex = Math.floor(Math.random() * INFLATABLE_TOYS.length);
+    return INFLATABLE_TOYS[randomIndex];
+  }, []);
+
   const aboutText = `Somos uma empresa dedicada a oferecer uma ampla variedade de brinquedos para crianças de todas as idades. Nosso objetivo é proporcionar diversão e segurança em cada aluguel, atendendo a festas de aniversário, eventos e ocasiões especiais com excelência e compromisso.
 
 Na UP Brinquedos, acreditamos que a alegria e diversão são as essenciais para o desenvolvimento infantil. Por isso, selecionamos cuidadosamente nossos brinquedos infláveis, todos conforme as normas de segurança, para garantir momentos de alegria com segurança e tranquilidade.
@@ -27,37 +34,45 @@ Na UP Brinquedos, estamos empenhados em oferecer os melhores brinquedos com segu
     <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
     >
       <View style={[styles.contentWrapper, isWeb && styles.contentWrapperWeb]}>
-        {/* Vídeo */}
+        {/* Imagem do Brinquedo */}
         <View
           style={[styles.imageContainer, isWeb && styles.imageContainerWeb]}
         >
-          <Video
-            source={require("../../videoplayback.mp4")}
+          <Image
+            source={randomToy.image}
             style={styles.image}
-            useNativeControls
-            isLooping
-            progressUpdateIntervalMillis={1000}
+            resizeMode="cover"
           />
         </View>
 
         {/* Texto */}
-        <View style={[styles.textContainer, isWeb && styles.textContainerWeb]}>
+        <LinearGradient
+          colors={["#ef4444", "#b91c1c"]}
+          style={[styles.textContainer, isWeb && styles.textContainerWeb]}
+        >
           <Text style={styles.title}>Quem Somos?</Text>
           <Text style={styles.text}>{aboutText}</Text>
           
           {/* Contato e Horário */}
           <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Contato:</Text>
+            <View style={styles.infoTitleRow}>
+              <Ionicons name="call-outline" size={18} color="#EF5350" />
+              <Text style={styles.infoLabel}>Contato</Text>
+            </View>
             <Text style={styles.infoText}>(11) 1234-5678</Text>
           </View>
           
           <View style={styles.infoBox}>
-            <Text style={styles.infoLabel}>Horário de Funcionamento:</Text>
+            <View style={styles.infoTitleRow}>
+              <Ionicons name="time-outline" size={18} color="#EF5350" />
+              <Text style={styles.infoLabel}>Horário de Funcionamento</Text>
+            </View>
             <Text style={styles.infoText}>Segunda a Sexta, das 9h às 18h</Text>
           </View>
-        </View>
+        </LinearGradient>
       </View>
     </ScrollView>
   );
@@ -87,7 +102,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#f0f0f0",
     overflow: "hidden",
     minHeight: 600,
-    resizeMode: "cover",
   },
   imageContainerWeb: {
     width: "50%",
@@ -98,12 +112,10 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    resizeMode: "cover",
   },
   textContainer: {
     flex: 0.5,
-    padding: 20,
-    backgroundColor: "#EF5350",
+    padding: 24,
   },
   textContainerWeb: {
     width: "50%",
@@ -126,15 +138,25 @@ const styles = StyleSheet.create({
   },
   infoBox: {
     backgroundColor: "#ffffff",
-    borderRadius: 8,
+    borderRadius: 12,
     padding: 16,
     marginBottom: 12,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  infoTitleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 6,
   },
   infoLabel: {
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: "700",
     color: "#EF5350",
-    marginBottom: 6,
   },
   infoText: {
     fontSize: 14,
