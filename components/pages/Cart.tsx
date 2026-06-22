@@ -6,13 +6,17 @@ import {
   TouchableOpacity,
   ScrollView,
   StyleSheet,
+  Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../db/CartContext";
+import { LinearGradient } from "expo-linear-gradient";
+
+const WHATSAPP_PHONE = "5547996831521";
 
 export default function Cart() {
-  const { cartItems, removeFromCart, clearCart } = useCart();
+  const { cartItems, removeFromCart, clearCart, rentalData } = useCart();
   const navigation = useNavigation<any>();
 
   const total = cartItems.reduce((sum, item) => sum + item.price, 0);
@@ -26,11 +30,48 @@ export default function Cart() {
   };
 
   const handleProceed = () => {
-    console.log("Prosseguir para aluguel");
+    if (!rentalData || cartItems.length === 0) return;
+
+    // Formatar a lista de brinquedos
+    const itemsList = cartItems
+      .map(
+        (item) =>
+          `• *${item.name}*\n  Período: ${formatDate(item.startDate)} até ${formatDate(item.endDate)} (${item.days} ${item.days === 1 ? "dia" : "dias"})\n  Preço: R$ ${item.price.toFixed(2)}`,
+      )
+      .join("\n\n");
+
+    // Formatar o endereço
+    const address = `${rentalData.rua}, nº ${rentalData.numero}${
+      rentalData.complemento ? " - " + rentalData.complemento : ""
+    }\nBairro: ${rentalData.bairro}\nCidade: ${rentalData.municipio}\nCEP: ${rentalData.cep}`;
+
+    // Montar a mensagem completa do pedido
+    const message =
+      `Olá! Gostaria de confirmar a simulação de aluguel:\n\n` +
+      `*BRINQUEDOS SOLICITADOS:*\n${itemsList}\n\n` +
+      `*ENDEREÇO DE ENTREGA:*\n${address}\n\n` +
+      `*PERÍODO DE USO GERAL:*\nDe ${formatDate(rentalData.dataInicial)} até ${formatDate(rentalData.dataFinal)}\n\n` +
+      `*TOTAL DO ALUGUEL:* R$ ${total.toFixed(2)}`;
+
+    const url = `whatsapp://send?phone=${WHATSAPP_PHONE}&text=${encodeURIComponent(message)}`;
+    const fallbackUrl = `https://wa.me/${WHATSAPP_PHONE}?text=${encodeURIComponent(message)}`;
+
+    Linking.canOpenURL(url)
+      .then((supported) => {
+        if (supported) {
+          Linking.openURL(url);
+        } else {
+          Linking.openURL(fallbackUrl);
+        }
+      })
+      .catch((err) => {
+        console.error("Erro ao abrir o WhatsApp:", err);
+        Linking.openURL(fallbackUrl);
+      });
   };
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Main Content */}
       <View style={styles.mainContent}>
         {/* Title and Clear Button */}
@@ -41,11 +82,36 @@ export default function Cart() {
               onPress={handleClearCart}
               style={styles.clearButton}
             >
-              <Ionicons name="trash-outline" size={20} color="#1e3a5f" />
-              <Text style={styles.clearButtonText}>Limpar Carrinho</Text>
+              <Ionicons name="trash-outline" size={16} color="#ef4444" />
+              <Text style={styles.clearButtonText}>Limpar Tudo</Text>
             </TouchableOpacity>
           )}
         </View>
+
+        {/* Delivery Address Summary */}
+        {rentalData && (
+          <View style={styles.addressCard}>
+            <View style={styles.addressHeader}>
+              <Ionicons name="location-outline" size={18} color="#1e3a8a" />
+              <Text style={styles.addressTitle}>Endereço de Entrega</Text>
+            </View>
+            <Text style={styles.addressText}>
+              {rentalData.rua}, nº {rentalData.numero}{" "}
+              {rentalData.complemento ? `(${rentalData.complemento})` : ""}
+            </Text>
+            <Text style={styles.addressSubtext}>
+              {rentalData.bairro} — {rentalData.municipio} | CEP:{" "}
+              {rentalData.cep}
+            </Text>
+            <View style={styles.addressPeriod}>
+              <Ionicons name="calendar-outline" size={14} color="#6b7280" />
+              <Text style={styles.addressPeriodText}>
+                Período reservado: {formatDate(rentalData.dataInicial)} até{" "}
+                {formatDate(rentalData.dataFinal)}
+              </Text>
+            </View>
+          </View>
+        )}
 
         {/* Cart Items or Empty Card */}
         {cartItems.length > 0 ? (
@@ -62,18 +128,22 @@ export default function Cart() {
 
                   {/* Product Info */}
                   <View style={styles.productInfo}>
-                    <Text style={styles.productName} numberOfLines={2}>{item.name}</Text>
+                    <Text style={styles.productName} numberOfLines={2}>
+                      {item.name}
+                    </Text>
                     <Text style={styles.productPriceDay}>
                       R$ {item.pricePerDay}/dia
                     </Text>
                     <View style={styles.dateRow}>
                       <Ionicons
                         name="calendar-outline"
-                        size={16}
-                        color="#8ba6d1"
+                        size={14}
+                        color="#3b6fd4"
                       />
                       <Text style={styles.dateText}>
-                        {item.startDate} até {item.endDate} ({item.days} {item.days === 1 ? "dia" : "dias"})
+                        {formatDate(item.startDate)} até{" "}
+                        {formatDate(item.endDate)} ({item.days}{" "}
+                        {item.days === 1 ? "dia" : "dias"})
                       </Text>
                     </View>
                   </View>
@@ -92,7 +162,7 @@ export default function Cart() {
                     onPress={() => handleRemoveItem(item.id)}
                     style={styles.removeButton}
                   >
-                    <Ionicons name="trash-outline" size={16} color="#ef4444" />
+                    <Ionicons name="trash-outline" size={14} color="#ef4444" />
                     <Text style={styles.removeButtonText}>Remover</Text>
                   </TouchableOpacity>
                 </View>
@@ -101,6 +171,7 @@ export default function Cart() {
           </View>
         ) : (
           <View style={styles.emptyCartCard}>
+            <Ionicons name="cart-outline" size={64} color="#9ca3af" />
             <Text style={styles.emptyCartText}>Seu carrinho está vazio</Text>
             <TouchableOpacity
               style={styles.emptyCartButton}
@@ -114,119 +185,187 @@ export default function Cart() {
         {/* Total Section & Proceed Button */}
         {cartItems.length > 0 && (
           <View style={styles.totalCard}>
-            <Text style={styles.totalLabel}>Total do Carrinho</Text>
-            <Text style={styles.totalValue}>R$ {total.toFixed(2)}</Text>
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Total do Aluguel</Text>
+              <Text style={styles.totalValue}>R$ {total.toFixed(2)}</Text>
+            </View>
 
             <TouchableOpacity
               onPress={handleProceed}
-              style={styles.proceedButton}
+              activeOpacity={0.8}
+              style={styles.proceedButtonWrapper}
             >
-              <Text style={styles.proceedButtonText}>
-                Prosseguir para Aluguel
-              </Text>
+              <LinearGradient
+                colors={["#22c55e", "#16a34a"]}
+                style={styles.proceedButton}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              >
+                <Ionicons
+                  name="logo-whatsapp"
+                  size={20}
+                  color="#fff"
+                  style={{ marginRight: 8 }}
+                />
+                <Text style={styles.proceedButtonText}>
+                  Finalizar no WhatsApp
+                </Text>
+              </LinearGradient>
             </TouchableOpacity>
           </View>
         )}
       </View>
+      <View style={{ height: 30 }} />
     </ScrollView>
   );
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString + "T00:00:00");
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+  });
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FCF9F2",
+    backgroundColor: "#f8faff",
   },
   mainContent: {
-    paddingHorizontal: 24,
-    paddingVertical: 40,
+    paddingHorizontal: 16,
+    paddingVertical: 20,
     width: "100%",
-    maxWidth: 1024,
+    maxWidth: 700,
     alignSelf: "center",
   },
   titleRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 24,
+    marginBottom: 16,
   },
   pageTitle: {
-    fontSize: 30,
-    fontWeight: "bold",
-    color: "#1e3a5f",
+    fontSize: 24,
+    fontWeight: "900",
+    color: "#1e3a8a",
   },
   clearButton: {
-    backgroundColor: "#fcd34d",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 8,
     flexDirection: "row",
     alignItems: "center",
-    gap: 8,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    backgroundColor: "#fee2e2",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: "#fecaca",
   },
   clearButtonText: {
-    fontWeight: "bold",
-    color: "#1e3a5f",
+    fontWeight: "700",
+    fontSize: 12,
+    color: "#ef4444",
+    marginLeft: 4,
+  },
+  addressCard: {
+    backgroundColor: "#eff6ff",
+    borderColor: "#bfdbfe",
+    borderWidth: 1.5,
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 20,
+  },
+  addressHeader: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 6,
+  },
+  addressTitle: {
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#1e3a8a",
+    marginLeft: 6,
+  },
+  addressText: {
+    fontSize: 13,
+    color: "#374151",
+    fontWeight: "700",
+    lineHeight: 18,
+  },
+  addressSubtext: {
+    fontSize: 12,
+    color: "#6b7280",
+    marginTop: 2,
+  },
+  addressPeriod: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 10,
+    paddingTop: 8,
+    borderTopWidth: 1,
+    borderTopColor: "#dbeafe",
+  },
+  addressPeriodText: {
+    fontSize: 11,
+    color: "#4b5563",
+    fontWeight: "600",
+    marginLeft: 4,
   },
   cartList: {
-    gap: 16,
-    marginBottom: 24,
+    marginBottom: 20,
   },
   cartCard: {
     backgroundColor: "#ffffff",
     borderRadius: 16,
-    padding: 16,
-    flexDirection: "column",
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
+    padding: 14,
+    marginBottom: 12,
+    shadowColor: "#1e3a8a",
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowRadius: 8,
+    elevation: 2,
   },
   cartCardTop: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 12,
   },
   productImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 12,
+    width: 65,
+    height: 65,
+    borderRadius: 10,
+    marginRight: 12,
+    backgroundColor: "#f3f4f6",
   },
   productInfo: {
     flex: 1,
     justifyContent: "center",
   },
   productName: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#1e3a5f",
-    marginBottom: 4,
+    fontSize: 14,
+    fontWeight: "800",
+    color: "#1f2937",
+    marginBottom: 3,
   },
   productPriceDay: {
-    fontSize: 13,
+    fontSize: 12,
     color: "#6b7280",
-    marginBottom: 4,
+    marginBottom: 3,
+    fontWeight: "500",
   },
   dateRow: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 6,
   },
   dateText: {
-    fontSize: 12,
-    color: "#8ba6d1",
-    fontWeight: "500",
+    fontSize: 11,
+    color: "#3b6fd4",
+    fontWeight: "600",
+    marginLeft: 4,
   },
   divider: {
     height: 1,
     backgroundColor: "#f3f4f6",
-    marginVertical: 12,
+    marginVertical: 10,
   },
   cartCardBottom: {
     flexDirection: "row",
@@ -235,112 +374,105 @@ const styles = StyleSheet.create({
   },
   subtotalContainer: {
     flexDirection: "row",
-    alignItems: "center",
+    alignItems: "baseline",
   },
   subtotalLabel: {
     color: "#6b7280",
-    fontSize: 13,
+    fontSize: 12,
+    fontWeight: "500",
   },
   subtotalValue: {
-    color: "#ef4444",
-    fontWeight: "bold",
-    fontSize: 18,
+    color: "#1e3a8a",
+    fontWeight: "800",
+    fontSize: 15,
   },
   removeButton: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
     backgroundColor: "#fef2f2",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
     borderColor: "#fee2e2",
   },
   removeButtonText: {
     color: "#ef4444",
-    fontWeight: "bold",
-    fontSize: 12,
+    fontWeight: "700",
+    fontSize: 11,
+    marginLeft: 4,
   },
   emptyCartCard: {
-    backgroundColor: "#ffffff48",
-    borderRadius: 16,
-    paddingVertical: 48,
-    paddingHorizontal: 24,
+    backgroundColor: "#ffffff",
+    borderRadius: 20,
+    paddingVertical: 45,
+    paddingHorizontal: 20,
     alignItems: "center",
     justifyContent: "center",
-    elevation: 2,
     shadowColor: "#000",
-    shadowOffset: { width: 1, height: 3 },
-    shadowOpacity: 0.2,
-    width: "100%",
-    maxWidth: 600,
-    alignSelf: "center",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 6,
+    elevation: 2,
     marginTop: 20,
   },
   emptyCartText: {
-    fontSize: 16,
-    color: "#64748b",
-    marginBottom: 20,
+    fontSize: 15,
+    color: "#6b7280",
+    marginVertical: 14,
     textAlign: "center",
-    fontWeight: "500",
+    fontWeight: "600",
   },
   emptyCartButton: {
-    backgroundColor: "#fcd34d",
-    paddingVertical: 16,
-    paddingHorizontal: 32,
+    backgroundColor: "#1e3a8a",
+    paddingVertical: 12,
+    paddingHorizontal: 24,
     borderRadius: 12,
-    marginVertical: 20,
-    elevation: 8,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.25,
-    shadowRadius: 6,
   },
   emptyCartButtonText: {
-    color: "#1e3a8a",
-    fontWeight: "bold",
-    fontSize: 16,
+    color: "#ffffff",
+    fontWeight: "700",
+    fontSize: 14,
   },
   totalCard: {
     backgroundColor: "#ffffff",
-    borderRadius: 16,
-    padding: 24,
-    marginTop: 16,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    borderRadius: 18,
+    padding: 16,
+    shadowColor: "#1e3a8a",
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.06,
+    shadowRadius: 12,
+    elevation: 3,
+  },
+  totalRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginBottom: 16,
   },
   totalLabel: {
-    textAlign: "center",
     color: "#6b7280",
     fontSize: 14,
-    marginBottom: 8,
-    fontWeight: "500",
+    fontWeight: "700",
   },
   totalValue: {
-    textAlign: "center",
-    fontSize: 40,
-    fontWeight: "bold",
+    fontSize: 22,
+    fontWeight: "900",
     color: "#10b981",
-    marginBottom: 24,
+  },
+  proceedButtonWrapper: {
+    borderRadius: 14,
+    overflow: "hidden",
   },
   proceedButton: {
-    backgroundColor: "#ef4444",
-    paddingVertical: 16,
-    borderRadius: 12,
-    elevation: 2,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingVertical: 14,
   },
   proceedButtonText: {
     color: "#ffffff",
-    textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 18,
+    fontWeight: "800",
+    fontSize: 15,
   },
 });

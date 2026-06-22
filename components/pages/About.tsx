@@ -55,7 +55,7 @@ Na UP Brinquedos, estamos empenhados em oferecer os melhores brinquedos com segu
         >
           <Text style={styles.title}>Quem Somos?</Text>
           <Text style={styles.text}>{aboutText}</Text>
-          
+
           {/* Contato e Horário */}
           <View style={styles.infoBox}>
             <View style={styles.infoTitleRow}>
@@ -64,7 +64,7 @@ Na UP Brinquedos, estamos empenhados em oferecer os melhores brinquedos com segu
             </View>
             <Text style={styles.infoText}>(11) 1234-5678</Text>
           </View>
-          
+
           <View style={styles.infoBox}>
             <View style={styles.infoTitleRow}>
               <Ionicons name="time-outline" size={18} color="#EF5350" />
