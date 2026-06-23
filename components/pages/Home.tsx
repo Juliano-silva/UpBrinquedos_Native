@@ -8,6 +8,7 @@ import {
   Alert,
   Modal,
   TextInput,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { INFLATABLE_TOYS, Toy } from "../../assets/toys";
@@ -27,16 +28,19 @@ export default function Home() {
   const [endDate, setEndDate] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchFocused, setSearchFocused] = useState(false);
 
   const categories = [
-    "Todos",
-    "Castelo",
-    "Piscina",
-    "Escorregador",
-    "Trampolim",
-    "Casa",
-    "Acessório",
+    { label: "Todos", icon: "🎉" },
+    { label: "Castelo", icon: "🏰" },
+    { label: "Piscina", icon: "🏊" },
+    { label: "Escorregador", icon: "🎢" },
+    { label: "Trampolim", icon: "⬆️" },
+    { label: "Casa", icon: "🐧" },
+    { label: "Acessório", icon: "🪜" },
   ];
+
+  const featuredToys = INFLATABLE_TOYS.filter((toy) => toy.featured);
 
   const filteredToys = INFLATABLE_TOYS.filter((toy) => {
     const matchesSearch = toy.name
@@ -52,27 +56,27 @@ export default function Home() {
   const handleDayPress = (day: any) => {
     if (selectingStart) {
       setStartDate(day.dateString);
+      setEndDate(null);
       setSelectingStart(false);
     } else {
       if (new Date(day.dateString) >= new Date(startDate!)) {
         setEndDate(day.dateString);
       } else {
-        Alert.alert("Erro", "A data final deve ser após a data inicial");
+        Alert.alert("Atenção", "A data final deve ser após a data inicial");
       }
     }
   };
 
   const handleAddToCart = () => {
     if (!selectedToy || !startDate || !endDate) {
-      Alert.alert("Erro", "Selecione as datas de aluguel");
+      Alert.alert("Atenção", "Selecione as datas de aluguel");
       return;
     }
 
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    const days = Math.ceil(
-      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24),
-    );
+    const start = new Date(startDate + "T00:00:00");
+    const end = new Date(endDate + "T00:00:00");
+    const diff = end.getTime() - start.getTime();
+    const days = diff === 0 ? 1 : Math.ceil(diff / (1000 * 60 * 60 * 24));
 
     const cartItem = {
       id: `${selectedToy.id}-${Date.now()}`,
@@ -86,7 +90,7 @@ export default function Home() {
     };
 
     addToCart(cartItem);
-    Alert.alert("Sucesso", `${selectedToy.name} adicionado ao carrinho! 🎉`);
+    Alert.alert("Adicionado! 🎉", `${selectedToy.name} foi adicionado ao carrinho com sucesso!`);
     closeModal();
   };
 
@@ -98,18 +102,84 @@ export default function Home() {
     setSelectingStart(true);
   };
 
+  const openToy = (toy: Toy) => {
+    setSelectedToy(toy);
+    setModalVisible(true);
+  };
+
+  const totalDays =
+    startDate && endDate
+      ? (() => {
+          const start = new Date(startDate + "T00:00:00");
+          const end = new Date(endDate + "T00:00:00");
+          const diff = end.getTime() - start.getTime();
+          return diff === 0 ? 1 : Math.ceil(diff / (1000 * 60 * 60 * 24));
+        })()
+      : 0;
+
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Hero Banner */}
+      <LinearGradient
+        colors={["#1e3a8a", "#3b6fd4", "#60a5fa"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 1, y: 1 }}
+        style={styles.heroBanner}
+      >
+        <View style={styles.heroContent}>
+          <View style={styles.heroBadge}>
+            <Text style={styles.heroBadgeText}>🎈 Aluguel de Infláveis</Text>
+          </View>
+          <Text style={styles.heroTitle}>Diversão que{"\n"}vai até você!</Text>
+          <Text style={styles.heroSubtitle}>
+            Mais de 8 brinquedos disponíveis para tornar sua festa inesquecível
+          </Text>
+          <View style={styles.heroStats}>
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>8+</Text>
+              <Text style={styles.statLabel}>Brinquedos</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>⭐ 5.0</Text>
+              <Text style={styles.statLabel}>Avaliação</Text>
+            </View>
+            <View style={styles.statDivider} />
+            <View style={styles.statItem}>
+              <Text style={styles.statNumber}>100+</Text>
+              <Text style={styles.statLabel}>Festas</Text>
+            </View>
+          </View>
+        </View>
+        <View style={styles.heroBalloons}>
+          <Text style={styles.balloonEmoji}>🎈</Text>
+          <Text style={[styles.balloonEmoji, { marginTop: 20, fontSize: 28 }]}>🎊</Text>
+          <Text style={[styles.balloonEmoji, { marginTop: -10 }]}>🎈</Text>
+        </View>
+      </LinearGradient>
+
       {/* Search Bar */}
-      <View style={styles.searchSection}>
-        <Ionicons name="search" size={20} color="#8ba6d1" />
-        <TextInput
-          style={styles.searchInput}
-          placeholder="Buscar brinquedo..."
-          value={searchText}
-          onChangeText={setSearchText}
-          placeholderTextColor="#ccc"
-        />
+      <View style={styles.searchWrapper}>
+        <View style={[styles.searchSection, searchFocused && styles.searchFocused]}>
+          <Ionicons name="search" size={20} color={searchFocused ? "#3b6fd4" : "#9ca3af"} />
+          <TextInput
+            style={styles.searchInput}
+            placeholder="Buscar brinquedo..."
+            value={searchText}
+            onChangeText={setSearchText}
+            placeholderTextColor="#9ca3af"
+            onFocus={() => setSearchFocused(true)}
+            onBlur={() => setSearchFocused(false)}
+          />
+          {searchText.length > 0 && (
+            <TouchableOpacity onPress={() => setSearchText("")}>
+              <Ionicons name="close-circle" size={20} color="#9ca3af" />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
 
       {/* Categories */}
@@ -117,86 +187,167 @@ export default function Home() {
         horizontal
         showsHorizontalScrollIndicator={false}
         style={styles.categoriesScroll}
+        contentContainerStyle={styles.categoriesContent}
       >
-        {categories.map((category) => (
+        {categories.map((cat) => (
           <TouchableOpacity
-            key={category}
+            key={cat.label}
             style={[
               styles.categoryButton,
-              selectedCategory === category && styles.categoryButtonActive,
+              (selectedCategory === cat.label || (cat.label === "Todos" && !selectedCategory)) &&
+                styles.categoryButtonActive,
             ]}
             onPress={() =>
               setSelectedCategory(
-                category === selectedCategory ? null : category,
+                cat.label === "Todos"
+                  ? null
+                  : cat.label === selectedCategory
+                  ? null
+                  : cat.label
               )
             }
+            activeOpacity={0.8}
           >
+            <Text style={styles.categoryIcon}>{cat.icon}</Text>
             <Text
               style={[
                 styles.categoryText,
-                selectedCategory === category && styles.categoryTextActive,
+                (selectedCategory === cat.label || (cat.label === "Todos" && !selectedCategory)) &&
+                  styles.categoryTextActive,
               ]}
             >
-              {category}
+              {cat.label}
             </Text>
           </TouchableOpacity>
         ))}
       </ScrollView>
 
-      {/* Toys Grid */}
-      <View style={styles.toysGrid}>
+      {/* Featured Section */}
+      {!searchText && !selectedCategory && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>⭐ Destaques</Text>
+            <Text style={styles.sectionSubtitle}>Os favoritos da galera</Text>
+          </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.featuredScroll}
+          >
+            {featuredToys.map((toy) => (
+              <TouchableOpacity
+                key={toy.id}
+                style={styles.featuredCard}
+                onPress={() => openToy(toy)}
+                activeOpacity={0.9}
+              >
+                <Image source={toy.image} style={styles.featuredImage} resizeMode="cover" />
+                <LinearGradient
+                  colors={["transparent", "rgba(0,0,0,0.85)"]}
+                  style={styles.featuredGradient}
+                >
+                  <View style={styles.featuredBadge}>
+                    <Text style={styles.featuredBadgeText}>Destaque</Text>
+                  </View>
+                  <Text style={styles.featuredName}>{toy.name}</Text>
+                  <View style={styles.featuredFooter}>
+                    <Text style={styles.featuredPrice}>R$ {toy.pricePerDay}/dia</Text>
+                    <View style={styles.featuredPeople}>
+                      <Ionicons name="people" size={12} color="#fff" />
+                      <Text style={styles.featuredPeopleText}>até {toy.maxPeople}</Text>
+                    </View>
+                  </View>
+                </LinearGradient>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
+      {/* All Toys Section */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>
+            {selectedCategory ? `${selectedCategory}s` : "🎪 Catálogo Completo"}
+          </Text>
+          <Text style={styles.sectionSubtitle}>
+            {filteredToys.length} disponíve{filteredToys.length === 1 ? "l" : "is"}
+          </Text>
+        </View>
+
         {filteredToys.length > 0 ? (
-          filteredToys.map((toy) => (
-            <TouchableOpacity
-              key={toy.id}
-              style={styles.toyCard}
-              onPress={() => {
-                setSelectedToy(toy);
-                setModalVisible(true);
-              }}
-            >
-              <Image source={toy.image} style={styles.toyImage} />
+          <View style={styles.toysGrid}>
+            {filteredToys.map((toy) => (
+              <TouchableOpacity
+                key={toy.id}
+                style={styles.toyCard}
+                onPress={() => openToy(toy)}
+                activeOpacity={0.9}
+              >
+                <View style={styles.toyImageContainer}>
+                  <Image source={toy.image} style={styles.toyImage} resizeMode="cover" />
+                  <View style={styles.toyIconBadge}>
+                    <Text style={styles.toyIconText}>{toy.categoryIcon}</Text>
+                  </View>
+                </View>
 
-              <View style={styles.toyInfo}>
-                <Text style={styles.toyName} numberOfLines={2}>
-                  {toy.name}
-                </Text>
-                <Text style={styles.toyDescription} numberOfLines={1}>
-                  {toy.description}
-                </Text>
+                <View style={styles.toyInfo}>
+                  <Text style={styles.toyName} numberOfLines={2}>
+                    {toy.name}
+                  </Text>
+                  <Text style={styles.toyDescription} numberOfLines={2}>
+                    {toy.description}
+                  </Text>
 
-                <View style={styles.toyFooter}>
-                  <View>
-                    <Text style={styles.toyPrice}>
-                      R$ {toy.pricePerDay}/dia
-                    </Text>
-                    <Text style={styles.toyCapacity}>
-                      Até {toy.maxPeople} pessoas
-                    </Text>
+                  <View style={styles.toyMeta}>
+                    <Ionicons name="people-outline" size={11} color="#6b7280" />
+                    <Text style={[styles.toyMetaText, { marginLeft: 4 }]}>Até {toy.maxPeople} pessoas</Text>
                   </View>
 
-                  <TouchableOpacity
-                    style={styles.addButton}
-                    onPress={() => {
-                      setSelectedToy(toy);
-                      setModalVisible(true);
-                    }}
-                  >
-                    <Ionicons name="add-circle" size={28} color="#FF6B6B" />
-                  </TouchableOpacity>
+                  <View style={styles.toyFooter}>
+                    <View>
+                      <Text style={styles.toyPriceLabel}>a partir de</Text>
+                      <Text style={styles.toyPrice}>R$ {toy.pricePerDay}</Text>
+                      <Text style={styles.toyPriceDay}>/dia</Text>
+                    </View>
+                    <TouchableOpacity
+                      style={styles.addButton}
+                      onPress={() => openToy(toy)}
+                      activeOpacity={0.8}
+                    >
+                      <LinearGradient
+                        colors={["#f97316", "#ef4444"]}
+                        style={styles.addButtonGradient}
+                      >
+                        <Ionicons name="add" size={20} color="#fff" />
+                      </LinearGradient>
+                    </TouchableOpacity>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
-          ))
+              </TouchableOpacity>
+            ))}
+          </View>
         ) : (
           <View style={styles.emptyState}>
-            <Ionicons name="sad-outline" size={48} color="#ccc" />
-            <Text style={styles.emptyText}>Nenhum brinquedo encontrado</Text>
+            <Text style={styles.emptyEmoji}>🔍</Text>
+            <Text style={styles.emptyTitle}>Nenhum brinquedo encontrado</Text>
+            <Text style={styles.emptySubtitle}>
+              Tente buscar com outro termo ou categoria
+            </Text>
+            <TouchableOpacity
+              style={styles.clearFilterButton}
+              onPress={() => { setSearchText(""); setSelectedCategory(null); }}
+            >
+              <Text style={styles.clearFilterText}>Limpar filtros</Text>
+            </TouchableOpacity>
           </View>
         )}
       </View>
 
-      {/* Date Selection Modal */}
+      {/* Bottom Padding */}
+      <View style={{ height: 24 }} />
+
+      {/* Detail & Date Modal */}
       <Modal
         visible={modalVisible}
         transparent
@@ -220,7 +371,6 @@ function formatDate(dateString: string): string {
   return date.toLocaleDateString("pt-BR", {
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
   });
 }
 
