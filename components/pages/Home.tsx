@@ -8,13 +8,13 @@ import {
   Alert,
   Modal,
   TextInput,
-  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { INFLATABLE_TOYS, Toy } from "../../assets/toys";
 import { useCart } from "../db/CartContext";
 import { Calendar } from "react-native-calendars";
 import ToyDetails from "./toyDetails";
+import { LinearGradient } from "expo-linear-gradient";
 
 import {styles} from "../styles/Home"
 

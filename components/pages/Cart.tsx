@@ -5,15 +5,17 @@ import {
   Image,
   TouchableOpacity,
   ScrollView,
+  StyleSheet,
+  Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../db/CartContext";
 import { LinearGradient } from "expo-linear-gradient";
+import {styles} from "../styles/Cart"
+
 
 const WHATSAPP_PHONE = "5547996831521";
-
-import {styles} from "../styles/Cart"
 
 export default function Cart() {
   const { cartItems, removeFromCart, clearCart, rentalData } = useCart();
@@ -218,4 +220,12 @@ export default function Cart() {
       <View style={{ height: 30 }} />
     </ScrollView>
   );
+}
+
+function formatDate(dateString: string): string {
+  const date = new Date(dateString + "T00:00:00");
+  return date.toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+  });
 }
