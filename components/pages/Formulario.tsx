@@ -6,8 +6,6 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
-  StyleSheet,
-  Dimensions,
 } from "react-native";
 import { Calendar } from "react-native-calendars";
 import { Ionicons } from "@expo/vector-icons";
@@ -15,6 +13,8 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useCart } from "../db/CartContext";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
+
+import {styles} from "../styles/Formulario"
 
 export default function FormularioAluguel() {
   const { saveRentalData } = useCart();
@@ -302,178 +302,3 @@ export default function FormularioAluguel() {
     </ScrollView>
   );
 }
-
-function formatDate(dateString: string): string {
-  const date = new Date(dateString + "T00:00:00");
-  return date.toLocaleDateString("pt-BR", {
-    day: "2-digit",
-    month: "2-digit",
-  });
-}
-
-function getDatesInRange(startDate: string, endDate: string): string[] {
-  const dates: string[] = [];
-  const currentDate = new Date(startDate + "T00:00:00");
-  const end = new Date(endDate + "T00:00:00");
-
-  while (currentDate < end) {
-    currentDate.setDate(currentDate.getDate() + 1);
-    const dateStr = currentDate.toISOString().split("T")[0];
-    if (dateStr !== endDate) {
-      dates.push(dateStr);
-    }
-  }
-
-  return dates;
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f8faff",
-  },
-  heroBanner: {
-    paddingTop: 50,
-    paddingBottom: 35,
-    paddingHorizontal: 24,
-    alignItems: "center",
-    borderBottomLeftRadius: 24,
-    borderBottomRightRadius: 24,
-  },
-  heroTitle: {
-    fontSize: 26,
-    fontWeight: "900",
-    color: "#fff",
-    letterSpacing: 1,
-  },
-  heroSubtitle: {
-    fontSize: 14,
-    color: "rgba(255, 255, 255, 0.85)",
-    marginTop: 6,
-    fontWeight: "600",
-  },
-  content: {
-    paddingHorizontal: 16,
-    paddingTop: 20,
-  },
-  stepHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    marginTop: 10,
-  },
-  stepDot: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
-    backgroundColor: "#3b6fd4",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 10,
-  },
-  stepDotDone: {
-    backgroundColor: "#22c55e",
-  },
-  stepTitle: {
-    fontSize: 16,
-    fontWeight: "700",
-    color: "#1e3a8a",
-  },
-  card: {
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 16,
-    shadowColor: "#1e3a8a",
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.06,
-    shadowRadius: 10,
-    elevation: 3,
-    marginBottom: 16,
-  },
-  resetDatesButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    alignSelf: "center",
-    marginTop: 14,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  resetDatesText: {
-    fontSize: 12,
-    color: "#ef4444",
-    fontWeight: "600",
-    marginLeft: 4,
-  },
-  periodSummary: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#f0f4ff",
-    borderRadius: 12,
-    padding: 12,
-    marginTop: 14,
-    borderLeftWidth: 4,
-    borderLeftColor: "#3b6fd4",
-  },
-  periodSummaryTextContainer: {
-    marginLeft: 10,
-  },
-  periodSummaryTitle: {
-    fontSize: 12,
-    fontWeight: "700",
-    color: "#1e3a8a",
-  },
-  periodSummaryDates: {
-    fontSize: 13,
-    color: "#374151",
-    fontWeight: "600",
-    marginTop: 2,
-  },
-  formSection: {
-    marginTop: 10,
-  },
-  formInstruction: {
-    fontSize: 13,
-    color: "#6b7280",
-    marginBottom: 16,
-    lineHeight: 18,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1.5,
-    borderColor: "#e5e7eb",
-    borderRadius: 12,
-    marginBottom: 12,
-    backgroundColor: "#f9fafb",
-    paddingHorizontal: 12,
-  },
-  inputIcon: {
-    marginRight: 8,
-  },
-  input: {
-    flex: 1,
-    paddingVertical: 12,
-    fontSize: 14,
-    color: "#1f2937",
-    fontWeight: "500",
-  },
-  rowInputs: {
-    flexDirection: "row",
-  },
-  submitButtonWrapper: {
-    marginTop: 8,
-    borderRadius: 14,
-    overflow: "hidden",
-  },
-  submitButton: {
-    paddingVertical: 16,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  submitButtonText: {
-    fontSize: 16,
-    fontWeight: "800",
-    color: "#fff",
-  },
-});

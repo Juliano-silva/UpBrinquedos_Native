@@ -3,13 +3,14 @@ import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   Image,
   Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { INFLATABLE_TOYS } from "../../assets/toys";
+
+import {styles} from "../styles/About"
 
 const { width } = Dimensions.get("window");
 const isWeb = width > 768;
@@ -77,90 +78,3 @@ Na UP Brinquedos, estamos empenhados em oferecer os melhores brinquedos com segu
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FCF9F2",
-  },
-  contentContainer: {
-    flexGrow: 1,
-    minHeight: "100%",
-  },
-  contentWrapper: {
-    flex: 1,
-    flexDirection: "column",
-    minHeight: "100%",
-  },
-  contentWrapperWeb: {
-    flexDirection: "row",
-    alignItems: "stretch",
-  },
-  imageContainer: {
-    flex: 2.5,
-    width: "100%",
-    backgroundColor: "#f0f0f0",
-    overflow: "hidden",
-    minHeight: 600,
-  },
-  imageContainerWeb: {
-    width: "50%",
-    flex: 1,
-    backgroundColor: "#f0f0f0",
-    overflow: "hidden",
-  },
-  image: {
-    width: "100%",
-    height: "100%",
-  },
-  textContainer: {
-    flex: 0.5,
-    padding: 24,
-  },
-  textContainerWeb: {
-    width: "50%",
-    flex: 1,
-    padding: 40,
-    justifyContent: "flex-start",
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#ffffff",
-    marginBottom: 16,
-  },
-  text: {
-    fontSize: 14,
-    lineHeight: 22,
-    color: "#ffffff",
-    textAlign: "justify",
-    marginBottom: 20,
-  },
-  infoBox: {
-    backgroundColor: "#ffffff",
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  infoTitleRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    marginBottom: 6,
-  },
-  infoLabel: {
-    fontSize: 15,
-    fontWeight: "700",
-    color: "#EF5350",
-  },
-  infoText: {
-    fontSize: 14,
-    color: "#333333",
-    lineHeight: 20,
-  },
-});
