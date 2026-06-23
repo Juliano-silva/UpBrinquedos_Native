@@ -358,7 +358,7 @@ export default function Home() {
           <ToyDetails
             toy={selectedToy}
             onAddToCart={handleAddToCart}
-            onBack={() => setSelectedToy(null)}
+            onBack={closeModal}
           />
         )}
       </Modal>

@@ -25,12 +25,12 @@ type Props = {
   onBack: () => void;
 };
 
-export default function ToyDetails({ toy, onAddToCart, onBack }: Props) {
-  return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={onBack} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={22} color="#2b160d" />
+  export default function ToyDetails({ toy, onAddToCart, onBack }: Props) {
+    return (
+      <ScrollView style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={onBack} style={styles.backBtn}>
+            <Ionicons name="chevron-back" size={22} color="#2b160d" />
           <Text style={styles.backText}>Voltar</Text>
         </TouchableOpacity>
 

@@ -261,7 +261,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   toyCard: {
-    width: 500,
+    width: 450,
     backgroundColor: "#fff",
     borderRadius: 16,
     overflow: "hidden",
