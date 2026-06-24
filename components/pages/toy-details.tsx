@@ -35,9 +35,11 @@ type Props = {
         </TouchableOpacity>
 
         <TouchableOpacity>
-          <Ionicons name="heart-outline" size={24} color="#2b160d" />
+          <Ionicons name="heart-outline" size={24} style={styles.heartIcon} />
         </TouchableOpacity>
       </View>
+
+      <Image source={require(`../../assets/toys/castelo_inflavel.png`)} style={styles.image} />
       
       <Text style={styles.title}>{toy.name}</Text>
 

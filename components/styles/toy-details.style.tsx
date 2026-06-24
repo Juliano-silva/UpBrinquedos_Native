@@ -35,6 +35,11 @@ export const styles = StyleSheet.create({
     width: 350,
     height: 300,
     resizeMode: "contain",
+    display:"flex",
+    justifyContent:"center",
+    alignItems:"center",
+    marginHorizontal: 16,
+    marginBottom: 20,
   },
 
   title: {
@@ -43,6 +48,15 @@ export const styles = StyleSheet.create({
     color: "#2b160d",
     margin: 16,
   },
+
+  heartIcon:{
+    backgroundColor:"#fff",
+    padding: 8,
+    borderRadius: 999,
+    color:"red"
+  },
+
+  
 
   description: {
     fontSize: 14,
