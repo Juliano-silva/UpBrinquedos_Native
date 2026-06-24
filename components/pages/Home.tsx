@@ -3,21 +3,21 @@ import {
   View,
   Text,
   ScrollView,
-  StyleSheet,
   TouchableOpacity,
   Image,
   Alert,
   Modal,
   TextInput,
-  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { INFLATABLE_TOYS, Toy } from "../../assets/toys";
 import { useCart } from "../db/CartContext";
+import { Calendar } from "react-native-calendars";
+import ToyDetails from "./toyDetails";
 import { LinearGradient } from "expo-linear-gradient";
 
-const { width: SCREEN_WIDTH } = Dimensions.get("window");
-const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
+import {styles} from "../styles/Home"
+
 
 export default function Home() {
   const { addToCart, rentalData } = useCart();
@@ -368,146 +368,13 @@ export default function Home() {
         animationType="slide"
         onRequestClose={closeModal}
       >
-        <View style={styles.modalOverlay}>
-          <TouchableOpacity style={styles.modalBackdrop} onPress={closeModal} />
-          <View style={styles.modalContent}>
-            {/* Modal Header Image */}
-            <View style={styles.modalImageContainer}>
-              <Image
-                source={selectedToy?.image}
-                style={styles.modalImage}
-                resizeMode="cover"
-              />
-              <LinearGradient
-                colors={["transparent", "rgba(0,0,0,0.7)"]}
-                style={styles.modalImageGradient}
-              />
-              <TouchableOpacity
-                style={styles.modalCloseButton}
-                onPress={closeModal}
-              >
-                <Ionicons name="close" size={22} color="#fff" />
-              </TouchableOpacity>
-              <View style={styles.modalTitleContainer}>
-                <Text style={styles.modalTitle}>{selectedToy?.name}</Text>
-                <View style={styles.modalPriceBadge}>
-                  <Text style={styles.modalPriceBadgeText}>
-                    R$ {selectedToy?.pricePerDay}/dia
-                  </Text>
-                </View>
-              </View>
-            </View>
-
-            <ScrollView
-              style={styles.modalBody}
-              showsVerticalScrollIndicator={false}
-            >
-              {/* Description */}
-              <Text style={styles.modalDescription}>
-                {selectedToy?.description}
-              </Text>
-
-              {/* Details Grid */}
-              <View style={styles.detailsGrid}>
-                <View style={styles.detailChip}>
-                  <Ionicons name="people" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>
-                    Até {selectedToy?.maxPeople} pessoas
-                  </Text>
-                </View>
-                <View style={styles.detailChip}>
-                  <Ionicons name="resize" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>
-                    {selectedToy?.dimensions}
-                  </Text>
-                </View>
-                <View style={styles.detailChip}>
-                  <Ionicons name="color-palette" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>
-                    {selectedToy?.color}
-                  </Text>
-                </View>
-                <View style={styles.detailChip}>
-                  <Ionicons name="pricetag" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>
-                    {selectedToy?.category}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Rental Period Summary */}
-              {startDate && endDate ? (
-                <LinearGradient
-                  colors={["#1e3a8a", "#3b6fd4"]}
-                  style={styles.summaryCard}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <View style={styles.summaryRow}>
-                    <View>
-                      <Text style={styles.summaryLabel}>
-                        Período do Aluguel
-                      </Text>
-                      <Text style={styles.summaryValue}>
-                        {formatDate(startDate)} → {formatDate(endDate)}
-                      </Text>
-                    </View>
-                    <View style={styles.summaryDays}>
-                      <Text style={styles.summaryDaysNumber}>{totalDays}</Text>
-                      <Text style={styles.summaryDaysLabel}>dias</Text>
-                    </View>
-                  </View>
-                  <View style={styles.summaryDivider} />
-                  <View style={styles.summaryTotalRow}>
-                    <Text style={styles.summaryTotalLabel}>
-                      Total do Aluguel
-                    </Text>
-                    <Text style={styles.summaryTotalValue}>
-                      R$ {((selectedToy?.pricePerDay ?? 0) * totalDays).toFixed(2)}
-                    </Text>
-                  </View>
-                </LinearGradient>
-              ) : (
-                <View style={styles.noDatesWarning}>
-                  <Ionicons name="calendar-outline" size={22} color="#f97316" />
-                  <Text style={styles.noDatesWarningText}>
-                    Preencha o formulário com as datas de aluguel para
-                    continuar.
-                  </Text>
-                </View>
-              )}
-
-              <View style={{ height: 16 }} />
-            </ScrollView>
-
-            {/* CTA Button */}
-            <View style={styles.modalFooter}>
-              <TouchableOpacity
-                onPress={handleAddToCart}
-                disabled={!startDate || !endDate}
-                activeOpacity={0.8}
-              >
-                <LinearGradient
-                  colors={
-                    startDate && endDate
-                      ? ["#f97316", "#ef4444"]
-                      : ["#d1d5db", "#9ca3af"]
-                  }
-                  style={styles.addToCartButton}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                >
-                  <Ionicons name="cart" size={22} color="#fff" />
-                  <Text style={styles.addToCartButtonText}>
-                    {startDate && endDate
-                      ? `Adicionar — R$ ${((selectedToy?.pricePerDay ?? 0) * totalDays).toFixed(2)}`
-                      : "Preencha o formulário primeiro"}
-                  </Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        {selectedToy && (
+          <ToyDetails
+            toy={selectedToy}
+            onAddToCart={handleAddToCart}
+            onBack={closeModal}
+          />
+        )}
       </Modal>
     </ScrollView>
   );
@@ -1117,3 +984,19 @@ const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
 });
+
+function getDatesInRange(startDate: string, endDate: string): string[] {
+  const dates: string[] = [];
+  const currentDate = new Date(startDate + "T00:00:00");
+  const end = new Date(endDate + "T00:00:00");
+
+  while (currentDate < end) {
+    currentDate.setDate(currentDate.getDate() + 1);
+    const dateStr = currentDate.toISOString().split("T")[0];
+    if (dateStr !== endDate) {
+      dates.push(dateStr);
+    }
+  }
+
+  return dates;
+}
