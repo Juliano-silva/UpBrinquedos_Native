@@ -20,7 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 
-import {styles} from "../styles/home.style"
+import { styles } from "../styles/home.style"
 
 
 export default function Home() {
@@ -104,11 +104,11 @@ export default function Home() {
   const totalDays =
     startDate && endDate
       ? (() => {
-          const start = new Date(startDate + "T00:00:00");
-          const end = new Date(endDate + "T00:00:00");
-          const diff = end.getTime() - start.getTime();
-          return diff === 0 ? 1 : Math.ceil(diff / (1000 * 60 * 60 * 24));
-        })()
+        const start = new Date(startDate + "T00:00:00");
+        const end = new Date(endDate + "T00:00:00");
+        const diff = end.getTime() - start.getTime();
+        return diff === 0 ? 1 : Math.ceil(diff / (1000 * 60 * 60 * 24));
+      })()
       : 0;
 
   return (
@@ -157,9 +157,14 @@ export default function Home() {
       {/* Search Bar */}
       <View style={styles.searchWrapper}>
         <View style={styles.backButton}>
-         <Text onPress={() => {AsyncStorage.removeItem('@dados_aluguel')}} >
-          Voltar para o Formulario
-        </Text>
+          <Text
+            onPress={async () => {
+              await AsyncStorage.removeItem('@dados_aluguel');
+              navigation.navigate('Formulario');
+            }}
+          >
+            Voltar para o Formulario
+          </Text>
         </View>
         <View
           style={[styles.searchSection, searchFocused && styles.searchFocused]}
@@ -200,7 +205,7 @@ export default function Home() {
               styles.categoryButton,
               (selectedCategory === cat.label ||
                 (cat.label === "Todos" && !selectedCategory)) &&
-                styles.categoryButtonActive,
+              styles.categoryButtonActive,
             ]}
             onPress={() =>
               setSelectedCategory(
@@ -219,7 +224,7 @@ export default function Home() {
                 styles.categoryText,
                 (selectedCategory === cat.label ||
                   (cat.label === "Todos" && !selectedCategory)) &&
-                  styles.categoryTextActive,
+                styles.categoryTextActive,
               ]}
             >
               {cat.label}
