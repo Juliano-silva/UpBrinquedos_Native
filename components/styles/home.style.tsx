@@ -2,14 +2,25 @@ import { StyleSheet, Dimensions, Platform } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
-// Função para dimensionamento responsivo
-// Assim Conseguindo deixar o Projeto Responsivo
-const scale = (size:number) => (width / 375) * size;
-const verticalScale = (size:number) => (height / 812) * size; 
-const moderateScale = (size:number, factor = 0.5) => size + (scale(size) - size) * factor;
+// Funções de escala
+const scale = (size: number) => (width / 375) * size;
+const verticalScale = (size: number) => (height / 812) * size;
+const moderateScale = (size: number, factor = 0.5) =>
+  size + (scale(size) - size) * factor;
 
-// Verificar se é tablet
+// Verifica se é tablet ou tela grande
 const isTablet = width >= 768;
+const isLargeScreen = width >= 1024;
+
+// Número de colunas para a grade de brinquedos
+const getColumns = () => {
+  if (width < 600) return 1;
+  if (width < 900) return 2;
+  return 3;
+};
+
+// Largura dos cards de destaque (proporcional)
+const featuredCardWidth = Math.min(width * 0.7, isTablet ? 350 : 300);
 
 export const styles = StyleSheet.create({
   container: {
@@ -44,17 +55,17 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   heroTitle: {
-    fontSize: moderateScale(isTablet ? 34 : 26),
+    fontSize: moderateScale(isLargeScreen ? 38 : isTablet ? 32 : 26, 0.3),
     fontWeight: "900",
     color: "#fff",
-    lineHeight: moderateScale(isTablet ? 40 : 32),
+    lineHeight: moderateScale(isLargeScreen ? 44 : isTablet ? 38 : 32, 0.3),
     marginBottom: verticalScale(8),
     letterSpacing: -0.5,
   },
   heroSubtitle: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(isTablet ? 14 : 12),
     color: "rgba(255,255,255,0.85)",
-    lineHeight: moderateScale(18),
+    lineHeight: moderateScale(isTablet ? 20 : 18),
     marginBottom: verticalScale(20),
   },
   heroStats: {
@@ -69,12 +80,12 @@ export const styles = StyleSheet.create({
     flex: 1,
   },
   statNumber: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(isTablet ? 16 : 14),
     fontWeight: "800",
     color: "#fff",
   },
   statLabel: {
-    fontSize: moderateScale(10),
+    fontSize: moderateScale(isTablet ? 11 : 10),
     color: "rgba(255,255,255,0.75)",
     marginTop: verticalScale(2),
   },
@@ -89,7 +100,7 @@ export const styles = StyleSheet.create({
     marginLeft: moderateScale(8),
   },
   balloonEmoji: {
-    fontSize: moderateScale(32),
+    fontSize: moderateScale(isTablet ? 40 : 32),
   },
 
   // === SEARCH ===
@@ -120,7 +131,7 @@ export const styles = StyleSheet.create({
   searchInput: {
     flex: 1,
     marginLeft: moderateScale(10),
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(isTablet ? 16 : 14),
     color: "#111827",
     fontWeight: "500",
   },
@@ -154,11 +165,11 @@ export const styles = StyleSheet.create({
     borderColor: "#1e3a8a",
   },
   categoryIcon: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(isTablet ? 16 : 14),
     marginRight: moderateScale(5),
   },
   categoryText: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(isTablet ? 14 : 12),
     color: "#4b5563",
     fontWeight: "600",
   },
@@ -178,13 +189,13 @@ export const styles = StyleSheet.create({
     marginBottom: verticalScale(14),
   },
   sectionTitle: {
-    fontSize: moderateScale(17),
+    fontSize: moderateScale(isTablet ? 20 : 17, 0.2),
     fontWeight: "800",
     color: "#111827",
     letterSpacing: -0.3,
   },
   sectionSubtitle: {
-    fontSize: moderateScale(12),
+    fontSize: moderateScale(isTablet ? 14 : 12),
     color: "#9ca3af",
     fontWeight: "500",
   },
@@ -194,8 +205,8 @@ export const styles = StyleSheet.create({
     paddingRight: moderateScale(4),
   },
   featuredCard: {
-    width: isTablet ? moderateScale(320) : moderateScale(307.36), // 452 * 0.68
-    height: isTablet ? verticalScale(220) : verticalScale(190),
+    width: featuredCardWidth,
+    height: isTablet ? verticalScale(240) : verticalScale(190),
     borderRadius: moderateScale(18),
     overflow: "hidden",
     marginRight: moderateScale(12),
@@ -235,10 +246,10 @@ export const styles = StyleSheet.create({
   },
   featuredName: {
     color: "#fff",
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(isTablet ? 18 : 15),
     fontWeight: "800",
     marginBottom: verticalScale(6),
-    lineHeight: moderateScale(20),
+    lineHeight: moderateScale(22),
   },
   featuredFooter: {
     flexDirection: "row",
@@ -247,7 +258,7 @@ export const styles = StyleSheet.create({
   },
   featuredPrice: {
     color: "#fbbf24",
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(isTablet ? 16 : 14),
     fontWeight: "800",
   },
   featuredPeople: {
@@ -260,7 +271,7 @@ export const styles = StyleSheet.create({
   },
   featuredPeopleText: {
     color: "#fff",
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(isTablet ? 12 : 11),
     fontWeight: "600",
   },
 
@@ -271,7 +282,7 @@ export const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   toyCard: {
-    width: isTablet ? "48%" : "100%", // 2 colunas em tablet, 1 em mobile
+    width: width < 600 ? "100%" : width < 900 ? "48%" : "32%",
     backgroundColor: "#fff",
     borderRadius: moderateScale(16),
     overflow: "hidden",
@@ -287,7 +298,7 @@ export const styles = StyleSheet.create({
   },
   toyImage: {
     width: "100%",
-    height: isTablet ? verticalScale(180) : verticalScale(130),
+    height: isTablet ? verticalScale(200) : verticalScale(130),
     backgroundColor: "#f0f4ff",
   },
   toyIconBadge: {
@@ -313,16 +324,16 @@ export const styles = StyleSheet.create({
     padding: moderateScale(11),
   },
   toyName: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(isTablet ? 15 : 13),
     fontWeight: "700",
     color: "#111827",
     marginBottom: verticalScale(4),
-    lineHeight: moderateScale(17),
+    lineHeight: moderateScale(18),
   },
   toyDescription: {
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(isTablet ? 12 : 11),
     color: "#6b7280",
-    lineHeight: moderateScale(15),
+    lineHeight: moderateScale(16),
     marginBottom: verticalScale(7),
   },
   toyMeta: {
@@ -331,7 +342,7 @@ export const styles = StyleSheet.create({
     marginBottom: verticalScale(10),
   },
   toyMetaText: {
-    fontSize: moderateScale(10),
+    fontSize: moderateScale(isTablet ? 11 : 10),
     color: "#6b7280",
     fontWeight: "500",
   },
@@ -347,10 +358,10 @@ export const styles = StyleSheet.create({
     letterSpacing: 0.3,
   },
   toyPrice: {
-    fontSize: moderateScale(15),
+    fontSize: moderateScale(isTablet ? 17 : 15),
     fontWeight: "800",
     color: "#1e3a8a",
-    lineHeight: moderateScale(19),
+    lineHeight: moderateScale(20),
   },
   toyPriceDay: {
     fontSize: moderateScale(9),
@@ -427,7 +438,7 @@ export const styles = StyleSheet.create({
   },
   modalImageContainer: {
     position: "relative",
-    height: isTablet ? verticalScale(300) : verticalScale(220),
+    height: isTablet ? height * 0.4 : height * 0.35,
   },
   modalImage: {
     width: "100%",
@@ -458,11 +469,11 @@ export const styles = StyleSheet.create({
     right: moderateScale(16),
   },
   modalTitle: {
-    fontSize: moderateScale(20),
+    fontSize: moderateScale(isTablet ? 24 : 20),
     fontWeight: "800",
     color: "#fff",
     marginBottom: verticalScale(6),
-    lineHeight: moderateScale(24),
+    lineHeight: moderateScale(28),
   },
   modalPriceBadge: {
     backgroundColor: "#f97316",
@@ -481,9 +492,9 @@ export const styles = StyleSheet.create({
     paddingTop: verticalScale(16),
   },
   modalDescription: {
-    fontSize: moderateScale(14),
+    fontSize: moderateScale(isTablet ? 15 : 14),
     color: "#374151",
-    lineHeight: moderateScale(21),
+    lineHeight: moderateScale(22),
     marginBottom: verticalScale(16),
   },
   detailsGrid: {
@@ -504,7 +515,7 @@ export const styles = StyleSheet.create({
     marginBottom: verticalScale(8),
   },
   detailChipText: {
-    fontSize: moderateScale(11),
+    fontSize: moderateScale(isTablet ? 12 : 11),
     color: "#374151",
     fontWeight: "600",
   },
@@ -533,7 +544,7 @@ export const styles = StyleSheet.create({
     color: "#fff",
   },
   calendarStepText: {
-    fontSize: moderateScale(13),
+    fontSize: moderateScale(isTablet ? 14 : 13),
     fontWeight: "600",
     color: "#374151",
     flex: 1,
@@ -626,7 +637,7 @@ export const styles = StyleSheet.create({
     borderRadius: moderateScale(16),
   },
   addToCartButtonText: {
-    fontSize: moderateScale(16),
+    fontSize: moderateScale(isTablet ? 18 : 16),
     fontWeight: "800",
     color: "#fff",
     letterSpacing: 0.3,

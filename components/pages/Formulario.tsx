@@ -12,6 +12,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import {styles} from "../styles/formulario.style"
 
+function Macaracep(txt:string){
+  return txt.replace(/(\d{5})(\d{3})/, "$1-$2");
+}
+
+
 export default function FormularioAluguel() {
   const [inicio, setInicio] = useState<string | null>(null);
   const [fim, setFim] = useState<string | null>(null);
@@ -190,10 +195,11 @@ export default function FormularioAluguel() {
             placeholder="CEP"
             placeholderTextColor="#888"
             keyboardType="numeric"
-            value={form.cep}
+            value={Macaracep(form.cep)}
             onChangeText={(text) =>
               setForm({ ...form, cep: text })
             }
+            maxLength={9}
             style={styles.input}
           />
 

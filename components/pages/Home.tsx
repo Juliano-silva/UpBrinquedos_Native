@@ -13,7 +13,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { INFLATABLE_TOYS, Toy } from "../../assets/toys";
 import { useCart } from "../db/CartContext";
 import { Calendar } from "react-native-calendars";
-import ToyDetails from "./toyDetails";
+import ToyDetails from "./toy-details";
 import { LinearGradient } from "expo-linear-gradient";
 
 import {styles} from "../styles/home.style"
