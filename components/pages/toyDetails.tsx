@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
-import {styles} from "../styles/toyDetails"
+import {styles} from "../styles/toy-details.style"
 
 type Toy = {
   id: string;

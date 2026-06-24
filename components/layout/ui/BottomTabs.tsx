@@ -3,10 +3,10 @@ import { Ionicons } from "@expo/vector-icons";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { useCart } from "../../db/CartContext";
 
-import Home from "../../pages/Home";
-import Gerencia from "../../pages/Gerencia";
-import Cart from "../../pages/Cart";
-import About from "../../pages/About";
+import Home from "../../pages/home";
+import Gerencia from "../../pages/gerencia";
+import Cart from "../../pages/cart";
+import About from "../../pages/about";
 
 const Tab = createBottomTabNavigator();
 

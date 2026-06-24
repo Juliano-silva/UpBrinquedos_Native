@@ -10,7 +10,7 @@ import {
 import { Calendar } from "react-native-calendars";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import {styles} from "../styles/Formulario"
+import {styles} from "../styles/formulario.style"
 
 export default function FormularioAluguel() {
   const [inicio, setInicio] = useState<string | null>(null);

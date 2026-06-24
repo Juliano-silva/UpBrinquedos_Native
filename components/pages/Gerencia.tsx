@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useCart } from "../db/CartContext";
 import { useNavigation } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import { styles } from "../styles/Gerencia";
+import { styles } from "../styles/gerencia.style";
 
 export default function Gerencia() {
   const { rentalData, clearRentalData, cartItems } = useCart();

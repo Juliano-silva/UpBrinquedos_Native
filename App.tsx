@@ -6,7 +6,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { CartProvider, useCart } from "./components/db/CartContext";
 import Header from "./components/layout/ui/Header";
-import FormularioAluguel from "./components/pages/Formulario";
+import FormularioAluguel from "./components/pages/formulario";
 
 function AppContent() {
   const { rentalData, isRentalLoading } = useCart();

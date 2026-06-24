@@ -16,7 +16,7 @@ import { Calendar } from "react-native-calendars";
 import ToyDetails from "./toyDetails";
 import { LinearGradient } from "expo-linear-gradient";
 
-import {styles} from "../styles/Home"
+import {styles} from "../styles/home.style"
 
 
 export default function Home() {

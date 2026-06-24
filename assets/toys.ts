@@ -112,4 +112,5 @@ export const INFLATABLE_TOYS: Toy[] = [
     color: "Laranja",
     image: require("./toys/escada_inflavel.png"),
   },
+  
 ];

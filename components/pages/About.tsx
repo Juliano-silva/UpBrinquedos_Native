@@ -10,10 +10,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import { INFLATABLE_TOYS } from "../../assets/toys";
 
-import { styles } from "../styles/About"
+import { styles } from "../styles/about.style"
 
 const { width } = Dimensions.get("window");
 const isWeb = width > 768;
+
+import toysAbout from "../../assets/toyAbout.png"
 
 export default function About() {
   const randomToy = React.useMemo(() => {
@@ -42,7 +44,7 @@ export default function About() {
           style={[styles.imageContainer, isWeb && styles.imageContainerWeb]}
         >
           <Image
-            source={randomToy.image}
+            source={toysAbout}
             style={styles.image}
             resizeMode="cover"
           />

@@ -12,7 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useCart } from "../db/CartContext";
 import { LinearGradient } from "expo-linear-gradient";
-import {styles} from "../styles/Cart"
+import {styles} from "../styles/cart.style"
 
 
 const WHATSAPP_PHONE = "5547996831521";
