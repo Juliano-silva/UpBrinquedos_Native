@@ -16,6 +16,9 @@ import { useCart } from "../db/CartContext";
 import { Calendar } from "react-native-calendars";
 import ToyDetails from "./toy-details";
 import { LinearGradient } from "expo-linear-gradient";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+
 
 import {styles} from "../styles/home.style"
 
@@ -154,7 +157,7 @@ export default function Home() {
       {/* Search Bar */}
       <View style={styles.searchWrapper}>
         <View style={styles.backButton}>
-         <Text onPress={() => {localStorage.removeItem('@dados_aluguel'),location.reload()}} >
+         <Text onPress={() => {AsyncStorage.removeItem('@dados_aluguel'),location.reload()}} >
           Voltar para o Formulario
         </Text>
         </View>
