@@ -14,22 +14,21 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { INFLATABLE_TOYS, Toy } from "../../assets/toys";
 import { useCart } from "../db/CartContext";
-import { Calendar } from "react-native-calendars";
 import { LinearGradient } from "expo-linear-gradient";
 
 const { width: SCREEN_WIDTH } = Dimensions.get("window");
 const CARD_WIDTH = (SCREEN_WIDTH - 48) / 2;
 
 export default function Home() {
-  const { addToCart } = useCart();
+  const { addToCart, rentalData } = useCart();
   const [selectedToy, setSelectedToy] = useState<Toy | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectingStart, setSelectingStart] = useState(true);
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchFocused, setSearchFocused] = useState(false);
+
+  const startDate = rentalData?.dataInicial ?? null;
+  const endDate = rentalData?.dataFinal ?? null;
 
   const categories = [
     { label: "Todos", icon: "🎉" },
@@ -54,23 +53,12 @@ export default function Home() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleDayPress = (day: any) => {
-    if (selectingStart) {
-      setStartDate(day.dateString);
-      setEndDate(null);
-      setSelectingStart(false);
-    } else {
-      if (new Date(day.dateString) >= new Date(startDate!)) {
-        setEndDate(day.dateString);
-      } else {
-        Alert.alert("Atenção", "A data final deve ser após a data inicial");
-      }
-    }
-  };
-
   const handleAddToCart = () => {
     if (!selectedToy || !startDate || !endDate) {
-      Alert.alert("Atenção", "Selecione as datas de aluguel");
+      Alert.alert(
+        "Atenção",
+        "Preencha o formulário com as datas de aluguel antes de adicionar ao carrinho.",
+      );
       return;
     }
 
@@ -91,16 +79,16 @@ export default function Home() {
     };
 
     addToCart(cartItem);
-    Alert.alert("Adicionado! 🎉", `${selectedToy.name} foi adicionado ao carrinho com sucesso!`);
+    Alert.alert(
+      "Adicionado! 🎉",
+      `${selectedToy.name} foi adicionado ao carrinho com sucesso!`,
+    );
     closeModal();
   };
 
   const closeModal = () => {
     setModalVisible(false);
     setSelectedToy(null);
-    setStartDate(null);
-    setEndDate(null);
-    setSelectingStart(true);
   };
 
   const openToy = (toy: Toy) => {
@@ -119,10 +107,7 @@ export default function Home() {
       : 0;
 
   return (
-    <ScrollView
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Hero Banner */}
       <LinearGradient
         colors={["#1e3a8a", "#3b6fd4", "#60a5fa"]}
@@ -157,15 +142,23 @@ export default function Home() {
         </View>
         <View style={styles.heroBalloons}>
           <Text style={styles.balloonEmoji}>🎈</Text>
-          <Text style={[styles.balloonEmoji, { marginTop: 20, fontSize: 28 }]}>🎊</Text>
+          <Text style={[styles.balloonEmoji, { marginTop: 20, fontSize: 28 }]}>
+            🎊
+          </Text>
           <Text style={[styles.balloonEmoji, { marginTop: -10 }]}>🎈</Text>
         </View>
       </LinearGradient>
 
       {/* Search Bar */}
       <View style={styles.searchWrapper}>
-        <View style={[styles.searchSection, searchFocused && styles.searchFocused]}>
-          <Ionicons name="search" size={20} color={searchFocused ? "#3b6fd4" : "#9ca3af"} />
+        <View
+          style={[styles.searchSection, searchFocused && styles.searchFocused]}
+        >
+          <Ionicons
+            name="search"
+            size={20}
+            color={searchFocused ? "#3b6fd4" : "#9ca3af"}
+          />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar brinquedo..."
@@ -195,7 +188,8 @@ export default function Home() {
             key={cat.label}
             style={[
               styles.categoryButton,
-              (selectedCategory === cat.label || (cat.label === "Todos" && !selectedCategory)) &&
+              (selectedCategory === cat.label ||
+                (cat.label === "Todos" && !selectedCategory)) &&
                 styles.categoryButtonActive,
             ]}
             onPress={() =>
@@ -203,8 +197,8 @@ export default function Home() {
                 cat.label === "Todos"
                   ? null
                   : cat.label === selectedCategory
-                  ? null
-                  : cat.label
+                    ? null
+                    : cat.label,
               )
             }
             activeOpacity={0.8}
@@ -213,7 +207,8 @@ export default function Home() {
             <Text
               style={[
                 styles.categoryText,
-                (selectedCategory === cat.label || (cat.label === "Todos" && !selectedCategory)) &&
+                (selectedCategory === cat.label ||
+                  (cat.label === "Todos" && !selectedCategory)) &&
                   styles.categoryTextActive,
               ]}
             >
@@ -242,7 +237,11 @@ export default function Home() {
                 onPress={() => openToy(toy)}
                 activeOpacity={0.9}
               >
-                <Image source={toy.image} style={styles.featuredImage} resizeMode="cover" />
+                <Image
+                  source={toy.image}
+                  style={styles.featuredImage}
+                  resizeMode="cover"
+                />
                 <LinearGradient
                   colors={["transparent", "rgba(0,0,0,0.85)"]}
                   style={styles.featuredGradient}
@@ -252,10 +251,14 @@ export default function Home() {
                   </View>
                   <Text style={styles.featuredName}>{toy.name}</Text>
                   <View style={styles.featuredFooter}>
-                    <Text style={styles.featuredPrice}>R$ {toy.pricePerDay}/dia</Text>
+                    <Text style={styles.featuredPrice}>
+                      R$ {toy.pricePerDay}/dia
+                    </Text>
                     <View style={styles.featuredPeople}>
                       <Ionicons name="people" size={12} color="#fff" />
-                      <Text style={styles.featuredPeopleText}>até {toy.maxPeople}</Text>
+                      <Text style={styles.featuredPeopleText}>
+                        até {toy.maxPeople}
+                      </Text>
                     </View>
                   </View>
                 </LinearGradient>
@@ -272,7 +275,8 @@ export default function Home() {
             {selectedCategory ? `${selectedCategory}s` : "🎪 Catálogo Completo"}
           </Text>
           <Text style={styles.sectionSubtitle}>
-            {filteredToys.length} disponíve{filteredToys.length === 1 ? "l" : "is"}
+            {filteredToys.length} disponíve
+            {filteredToys.length === 1 ? "l" : "is"}
           </Text>
         </View>
 
@@ -286,7 +290,11 @@ export default function Home() {
                 activeOpacity={0.9}
               >
                 <View style={styles.toyImageContainer}>
-                  <Image source={toy.image} style={styles.toyImage} resizeMode="cover" />
+                  <Image
+                    source={toy.image}
+                    style={styles.toyImage}
+                    resizeMode="cover"
+                  />
                   <View style={styles.toyIconBadge}>
                     <Text style={styles.toyIconText}>{toy.categoryIcon}</Text>
                   </View>
@@ -302,7 +310,9 @@ export default function Home() {
 
                   <View style={styles.toyMeta}>
                     <Ionicons name="people-outline" size={11} color="#6b7280" />
-                    <Text style={[styles.toyMetaText, { marginLeft: 4 }]}>Até {toy.maxPeople} pessoas</Text>
+                    <Text style={[styles.toyMetaText, { marginLeft: 4 }]}>
+                      Até {toy.maxPeople} pessoas
+                    </Text>
                   </View>
 
                   <View style={styles.toyFooter}>
@@ -337,7 +347,10 @@ export default function Home() {
             </Text>
             <TouchableOpacity
               style={styles.clearFilterButton}
-              onPress={() => { setSearchText(""); setSelectedCategory(null); }}
+              onPress={() => {
+                setSearchText("");
+                setSelectedCategory(null);
+              }}
             >
               <Text style={styles.clearFilterText}>Limpar filtros</Text>
             </TouchableOpacity>
@@ -369,7 +382,10 @@ export default function Home() {
                 colors={["transparent", "rgba(0,0,0,0.7)"]}
                 style={styles.modalImageGradient}
               />
-              <TouchableOpacity style={styles.modalCloseButton} onPress={closeModal}>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={closeModal}
+              >
                 <Ionicons name="close" size={22} color="#fff" />
               </TouchableOpacity>
               <View style={styles.modalTitleContainer}>
@@ -382,151 +398,84 @@ export default function Home() {
               </View>
             </View>
 
-            <ScrollView style={styles.modalBody} showsVerticalScrollIndicator={false}>
+            <ScrollView
+              style={styles.modalBody}
+              showsVerticalScrollIndicator={false}
+            >
               {/* Description */}
-              <Text style={styles.modalDescription}>{selectedToy?.description}</Text>
+              <Text style={styles.modalDescription}>
+                {selectedToy?.description}
+              </Text>
 
               {/* Details Grid */}
               <View style={styles.detailsGrid}>
                 <View style={styles.detailChip}>
                   <Ionicons name="people" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>Até {selectedToy?.maxPeople} pessoas</Text>
+                  <Text style={styles.detailChipText}>
+                    Até {selectedToy?.maxPeople} pessoas
+                  </Text>
                 </View>
                 <View style={styles.detailChip}>
                   <Ionicons name="resize" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>{selectedToy?.dimensions}</Text>
+                  <Text style={styles.detailChipText}>
+                    {selectedToy?.dimensions}
+                  </Text>
                 </View>
                 <View style={styles.detailChip}>
                   <Ionicons name="color-palette" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>{selectedToy?.color}</Text>
+                  <Text style={styles.detailChipText}>
+                    {selectedToy?.color}
+                  </Text>
                 </View>
                 <View style={styles.detailChip}>
                   <Ionicons name="pricetag" size={14} color="#3b6fd4" />
-                  <Text style={styles.detailChipText}>{selectedToy?.category}</Text>
-                </View>
-              </View>
-
-              {/* Calendar Section */}
-              <View style={styles.calendarSection}>
-                <View style={styles.calendarStepHeader}>
-                  <View style={[styles.stepDot, !selectingStart && styles.stepDotDone]}>
-                    <Text style={styles.stepDotText}>1</Text>
-                  </View>
-                  <Text style={styles.calendarStepText}>
-                    {selectingStart ? "Escolha a data de INÍCIO" : "✅ Data inicial: " + (startDate ? formatDate(startDate) : "")}
+                  <Text style={styles.detailChipText}>
+                    {selectedToy?.category}
                   </Text>
                 </View>
-                {!selectingStart && (
-                  <View style={styles.calendarStepHeader}>
-                    <View style={[styles.stepDot, !!endDate && styles.stepDotDone]}>
-                      <Text style={styles.stepDotText}>2</Text>
-                    </View>
-                    <Text style={styles.calendarStepText}>
-                      {endDate ? "✅ Data final: " + formatDate(endDate) : "Escolha a data de FIM"}
-                    </Text>
-                  </View>
-                )}
+              </View>
 
-                <Calendar
-                  onDayPress={handleDayPress}
-                  minDate={
-                    new Date(Date.now() + 86400000).toISOString().split("T")[0]
-                  }
-                  maxDate={
-                    new Date(Date.now() + 90 * 86400000)
-                      .toISOString()
-                      .split("T")[0]
-                  }
-                  markingType="period"
-                  markedDates={{
-                    ...(startDate && {
-                      [startDate]: {
-                        startingDay: true,
-                        color: "#3b6fd4",
-                        textColor: "#fff",
-                      },
-                    }),
-                    ...(endDate && {
-                      [endDate]: {
-                        endingDay: true,
-                        color: "#3b6fd4",
-                        textColor: "#fff",
-                      },
-                    }),
-                    ...(startDate &&
-                      endDate &&
-                      getDatesInRange(startDate, endDate).reduce(
-                        (acc, date) => ({
-                          ...acc,
-                          [date]: {
-                            color: "#c7d9f7",
-                            textColor: "#1e3a8a",
-                          },
-                        }),
-                        {}
-                      )),
-                  }}
-                  theme={{
-                    backgroundColor: "#fff",
-                    calendarBackground: "#fff",
-                    textSectionTitleColor: "#1e3a8a",
-                    selectedDayBackgroundColor: "#3b6fd4",
-                    selectedDayTextColor: "#fff",
-                    todayTextColor: "#f97316",
-                    dayTextColor: "#374151",
-                    arrowColor: "#3b6fd4",
-                    monthTextColor: "#1e3a8a",
-                    textDayFontWeight: "500",
-                    textMonthFontWeight: "700",
-                    textDayHeaderFontWeight: "600",
-                  }}
-                />
-
-                {/* Reset dates */}
-                {(startDate || endDate) && (
-                  <TouchableOpacity
-                    style={styles.resetDatesButton}
-                    onPress={() => {
-                      setStartDate(null);
-                      setEndDate(null);
-                      setSelectingStart(true);
-                    }}
-                  >
-                    <Ionicons name="refresh" size={14} color="#6b7280" />
-                    <Text style={styles.resetDatesText}>Redefinir datas</Text>
-                  </TouchableOpacity>
-                )}
-
-                {/* Summary */}
-                {startDate && endDate && (
-                  <LinearGradient
-                    colors={["#1e3a8a", "#3b6fd4"]}
-                    style={styles.summaryCard}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                  >
-                    <View style={styles.summaryRow}>
-                      <View>
-                        <Text style={styles.summaryLabel}>Período</Text>
-                        <Text style={styles.summaryValue}>
-                          {formatDate(startDate)} → {formatDate(endDate)}
-                        </Text>
-                      </View>
-                      <View style={styles.summaryDays}>
-                        <Text style={styles.summaryDaysNumber}>{totalDays}</Text>
-                        <Text style={styles.summaryDaysLabel}>dias</Text>
-                      </View>
-                    </View>
-                    <View style={styles.summaryDivider} />
-                    <View style={styles.summaryTotalRow}>
-                      <Text style={styles.summaryTotalLabel}>Total do Aluguel</Text>
-                      <Text style={styles.summaryTotalValue}>
-                        R$ {(selectedToy!.pricePerDay * totalDays).toFixed(2)}
+              {/* Rental Period Summary */}
+              {startDate && endDate ? (
+                <LinearGradient
+                  colors={["#1e3a8a", "#3b6fd4"]}
+                  style={styles.summaryCard}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
+                >
+                  <View style={styles.summaryRow}>
+                    <View>
+                      <Text style={styles.summaryLabel}>
+                        Período do Aluguel
+                      </Text>
+                      <Text style={styles.summaryValue}>
+                        {formatDate(startDate)} → {formatDate(endDate)}
                       </Text>
                     </View>
-                  </LinearGradient>
-                )}
-              </View>
+                    <View style={styles.summaryDays}>
+                      <Text style={styles.summaryDaysNumber}>{totalDays}</Text>
+                      <Text style={styles.summaryDaysLabel}>dias</Text>
+                    </View>
+                  </View>
+                  <View style={styles.summaryDivider} />
+                  <View style={styles.summaryTotalRow}>
+                    <Text style={styles.summaryTotalLabel}>
+                      Total do Aluguel
+                    </Text>
+                    <Text style={styles.summaryTotalValue}>
+                      R$ {((selectedToy?.pricePerDay ?? 0) * totalDays).toFixed(2)}
+                    </Text>
+                  </View>
+                </LinearGradient>
+              ) : (
+                <View style={styles.noDatesWarning}>
+                  <Ionicons name="calendar-outline" size={22} color="#f97316" />
+                  <Text style={styles.noDatesWarningText}>
+                    Preencha o formulário com as datas de aluguel para
+                    continuar.
+                  </Text>
+                </View>
+              )}
 
               <View style={{ height: 16 }} />
             </ScrollView>
@@ -551,8 +500,8 @@ export default function Home() {
                   <Ionicons name="cart" size={22} color="#fff" />
                   <Text style={styles.addToCartButtonText}>
                     {startDate && endDate
-                      ? `Adicionar — R$ ${(selectedToy!.pricePerDay * totalDays).toFixed(2)}`
-                      : "Selecione as datas"}
+                      ? `Adicionar — R$ ${((selectedToy?.pricePerDay ?? 0) * totalDays).toFixed(2)}`
+                      : "Preencha o formulário primeiro"}
                   </Text>
                 </LinearGradient>
               </TouchableOpacity>
@@ -570,22 +519,6 @@ function formatDate(dateString: string): string {
     day: "2-digit",
     month: "2-digit",
   });
-}
-
-function getDatesInRange(startDate: string, endDate: string): string[] {
-  const dates: string[] = [];
-  const currentDate = new Date(startDate + "T00:00:00");
-  const end = new Date(endDate + "T00:00:00");
-
-  while (currentDate < end) {
-    currentDate.setDate(currentDate.getDate() + 1);
-    const dateStr = currentDate.toISOString().split("T")[0];
-    if (dateStr !== endDate) {
-      dates.push(dateStr);
-    }
-  }
-
-  return dates;
 }
 
 const styles = StyleSheet.create({
@@ -1085,48 +1018,23 @@ const styles = StyleSheet.create({
     color: "#374151",
     fontWeight: "600",
   },
-  calendarSection: {
+  noDatesWarning: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#fff7ed",
+    borderRadius: 14,
+    padding: 14,
     marginBottom: 8,
+    borderWidth: 1,
+    borderColor: "#fed7aa",
+    gap: 10,
   },
-  calendarStepHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 10,
-  },
-  stepDot: {
-    width: 22,
-    height: 22,
-    borderRadius: 11,
-    backgroundColor: "#e5e7eb",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  stepDotDone: {
-    backgroundColor: "#22c55e",
-  },
-  stepDotText: {
-    fontSize: 11,
-    fontWeight: "800",
-    color: "#fff",
-  },
-  calendarStepText: {
-    fontSize: 13,
-    fontWeight: "600",
-    color: "#374151",
+  noDatesWarningText: {
     flex: 1,
-  },
-  resetDatesButton: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "center",
-    marginTop: 10,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-  },
-  resetDatesText: {
-    fontSize: 12,
-    color: "#6b7280",
+    fontSize: 13,
+    color: "#c2410c",
     fontWeight: "600",
+    lineHeight: 18,
   },
   summaryCard: {
     borderRadius: 16,
