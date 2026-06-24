@@ -20,15 +20,15 @@ import {styles} from "../styles/Home"
 
 
 export default function Home() {
-  const { addToCart } = useCart();
+  const { addToCart, rentalData } = useCart();
   const [selectedToy, setSelectedToy] = useState<Toy | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectingStart, setSelectingStart] = useState(true);
-  const [startDate, setStartDate] = useState<string | null>(null);
-  const [endDate, setEndDate] = useState<string | null>(null);
   const [searchText, setSearchText] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchFocused, setSearchFocused] = useState(false);
+
+  const startDate = rentalData?.dataInicial ?? null;
+  const endDate = rentalData?.dataFinal ?? null;
 
   const categories = [
     { label: "Todos", icon: "🎉" },
@@ -53,23 +53,12 @@ export default function Home() {
     return matchesSearch && matchesCategory;
   });
 
-  const handleDayPress = (day: any) => {
-    if (selectingStart) {
-      setStartDate(day.dateString);
-      setEndDate(null);
-      setSelectingStart(false);
-    } else {
-      if (new Date(day.dateString) >= new Date(startDate!)) {
-        setEndDate(day.dateString);
-      } else {
-        Alert.alert("Atenção", "A data final deve ser após a data inicial");
-      }
-    }
-  };
-
   const handleAddToCart = () => {
     if (!selectedToy || !startDate || !endDate) {
-      Alert.alert("Atenção", "Selecione as datas de aluguel");
+      Alert.alert(
+        "Atenção",
+        "Preencha o formulário com as datas de aluguel antes de adicionar ao carrinho.",
+      );
       return;
     }
 
@@ -90,16 +79,16 @@ export default function Home() {
     };
 
     addToCart(cartItem);
-    Alert.alert("Adicionado! 🎉", `${selectedToy.name} foi adicionado ao carrinho com sucesso!`);
+    Alert.alert(
+      "Adicionado! 🎉",
+      `${selectedToy.name} foi adicionado ao carrinho com sucesso!`,
+    );
     closeModal();
   };
 
   const closeModal = () => {
     setModalVisible(false);
     setSelectedToy(null);
-    setStartDate(null);
-    setEndDate(null);
-    setSelectingStart(true);
   };
 
   const openToy = (toy: Toy) => {
@@ -118,10 +107,7 @@ export default function Home() {
       : 0;
 
   return (
-    <ScrollView
-      style={styles.container}
-      showsVerticalScrollIndicator={false}
-    >
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Hero Banner */}
       <LinearGradient
         colors={["#1e3a8a", "#3b6fd4", "#60a5fa"]}
@@ -156,15 +142,23 @@ export default function Home() {
         </View>
         <View style={styles.heroBalloons}>
           <Text style={styles.balloonEmoji}>🎈</Text>
-          <Text style={[styles.balloonEmoji, { marginTop: 20, fontSize: 28 }]}>🎊</Text>
+          <Text style={[styles.balloonEmoji, { marginTop: 20, fontSize: 28 }]}>
+            🎊
+          </Text>
           <Text style={[styles.balloonEmoji, { marginTop: -10 }]}>🎈</Text>
         </View>
       </LinearGradient>
 
       {/* Search Bar */}
       <View style={styles.searchWrapper}>
-        <View style={[styles.searchSection, searchFocused && styles.searchFocused]}>
-          <Ionicons name="search" size={20} color={searchFocused ? "#3b6fd4" : "#9ca3af"} />
+        <View
+          style={[styles.searchSection, searchFocused && styles.searchFocused]}
+        >
+          <Ionicons
+            name="search"
+            size={20}
+            color={searchFocused ? "#3b6fd4" : "#9ca3af"}
+          />
           <TextInput
             style={styles.searchInput}
             placeholder="Buscar brinquedo..."
@@ -194,7 +188,8 @@ export default function Home() {
             key={cat.label}
             style={[
               styles.categoryButton,
-              (selectedCategory === cat.label || (cat.label === "Todos" && !selectedCategory)) &&
+              (selectedCategory === cat.label ||
+                (cat.label === "Todos" && !selectedCategory)) &&
                 styles.categoryButtonActive,
             ]}
             onPress={() =>
@@ -202,8 +197,8 @@ export default function Home() {
                 cat.label === "Todos"
                   ? null
                   : cat.label === selectedCategory
-                  ? null
-                  : cat.label
+                    ? null
+                    : cat.label,
               )
             }
             activeOpacity={0.8}
@@ -212,7 +207,8 @@ export default function Home() {
             <Text
               style={[
                 styles.categoryText,
-                (selectedCategory === cat.label || (cat.label === "Todos" && !selectedCategory)) &&
+                (selectedCategory === cat.label ||
+                  (cat.label === "Todos" && !selectedCategory)) &&
                   styles.categoryTextActive,
               ]}
             >
@@ -241,7 +237,11 @@ export default function Home() {
                 onPress={() => openToy(toy)}
                 activeOpacity={0.9}
               >
-                <Image source={toy.image} style={styles.featuredImage} resizeMode="cover" />
+                <Image
+                  source={toy.image}
+                  style={styles.featuredImage}
+                  resizeMode="cover"
+                />
                 <LinearGradient
                   colors={["transparent", "rgba(0,0,0,0.85)"]}
                   style={styles.featuredGradient}
@@ -251,10 +251,14 @@ export default function Home() {
                   </View>
                   <Text style={styles.featuredName}>{toy.name}</Text>
                   <View style={styles.featuredFooter}>
-                    <Text style={styles.featuredPrice}>R$ {toy.pricePerDay}/dia</Text>
+                    <Text style={styles.featuredPrice}>
+                      R$ {toy.pricePerDay}/dia
+                    </Text>
                     <View style={styles.featuredPeople}>
                       <Ionicons name="people" size={12} color="#fff" />
-                      <Text style={styles.featuredPeopleText}>até {toy.maxPeople}</Text>
+                      <Text style={styles.featuredPeopleText}>
+                        até {toy.maxPeople}
+                      </Text>
                     </View>
                   </View>
                 </LinearGradient>
@@ -271,7 +275,8 @@ export default function Home() {
             {selectedCategory ? `${selectedCategory}s` : "🎪 Catálogo Completo"}
           </Text>
           <Text style={styles.sectionSubtitle}>
-            {filteredToys.length} disponíve{filteredToys.length === 1 ? "l" : "is"}
+            {filteredToys.length} disponíve
+            {filteredToys.length === 1 ? "l" : "is"}
           </Text>
         </View>
 
@@ -285,7 +290,11 @@ export default function Home() {
                 activeOpacity={0.9}
               >
                 <View style={styles.toyImageContainer}>
-                  <Image source={toy.image} style={styles.toyImage} resizeMode="cover" />
+                  <Image
+                    source={toy.image}
+                    style={styles.toyImage}
+                    resizeMode="cover"
+                  />
                   <View style={styles.toyIconBadge}>
                     <Text style={styles.toyIconText}>{toy.categoryIcon}</Text>
                   </View>
@@ -301,7 +310,9 @@ export default function Home() {
 
                   <View style={styles.toyMeta}>
                     <Ionicons name="people-outline" size={11} color="#6b7280" />
-                    <Text style={[styles.toyMetaText, { marginLeft: 4 }]}>Até {toy.maxPeople} pessoas</Text>
+                    <Text style={[styles.toyMetaText, { marginLeft: 4 }]}>
+                      Até {toy.maxPeople} pessoas
+                    </Text>
                   </View>
 
                   <View style={styles.toyFooter}>
@@ -336,7 +347,10 @@ export default function Home() {
             </Text>
             <TouchableOpacity
               style={styles.clearFilterButton}
-              onPress={() => { setSearchText(""); setSelectedCategory(null); }}
+              onPress={() => {
+                setSearchText("");
+                setSelectedCategory(null);
+              }}
             >
               <Text style={styles.clearFilterText}>Limpar filtros</Text>
             </TouchableOpacity>
@@ -374,6 +388,8 @@ function formatDate(dateString: string): string {
   });
 }
 
+
+
 function getDatesInRange(startDate: string, endDate: string): string[] {
   const dates: string[] = [];
   const currentDate = new Date(startDate + "T00:00:00");
@@ -389,4 +405,3 @@ function getDatesInRange(startDate: string, endDate: string): string[] {
 
   return dates;
 }
-
