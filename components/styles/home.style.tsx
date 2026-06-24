@@ -18,6 +18,15 @@ export const styles = StyleSheet.create({
   heroContent: {
     flex: 1,
   },
+
+   backButton: {
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    borderRadius: 8,
+    margin: 10,
+    alignSelf: 'flex-start',
+  },
+
   heroBadge: {
     backgroundColor: "rgba(255,255,255,0.2)",
     borderRadius: 20,

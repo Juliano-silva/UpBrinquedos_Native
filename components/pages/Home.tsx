@@ -4,6 +4,7 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
+  Button,
   Image,
   Alert,
   Modal,
@@ -96,6 +97,7 @@ export default function Home() {
     setModalVisible(true);
   };
 
+
   const totalDays =
     startDate && endDate
       ? (() => {
@@ -151,6 +153,11 @@ export default function Home() {
 
       {/* Search Bar */}
       <View style={styles.searchWrapper}>
+        <View style={styles.backButton}>
+         <Text onPress={() => {localStorage.removeItem('@dados_aluguel'),location.reload()}} >
+          Voltar para o Formulario
+        </Text>
+        </View>
         <View
           style={[styles.searchSection, searchFocused && styles.searchFocused]}
         >
