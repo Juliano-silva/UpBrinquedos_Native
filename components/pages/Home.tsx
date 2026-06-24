@@ -157,7 +157,7 @@ export default function Home() {
       {/* Search Bar */}
       <View style={styles.searchWrapper}>
         <View style={styles.backButton}>
-         <Text onPress={() => {AsyncStorage.removeItem('@dados_aluguel'),location.reload()}} >
+         <Text onPress={() => {AsyncStorage.removeItem('@dados_aluguel')}} >
           Voltar para o Formulario
         </Text>
         </View>
